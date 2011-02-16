@@ -206,7 +206,7 @@
  * END OF TERMS AND CONDITIONS
  * 
  */
-package com.googlecode.jconfig;
+package com.google.code.jconfig;
 
 
 import java.io.UnsupportedEncodingException;
@@ -215,11 +215,11 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.googlecode.jconfig.ConfigurationException;
-import com.googlecode.jconfig.ConfigurationManager;
-import com.googlecode.jconfig.listener.IConfigurationChangeListener;
-import com.googlecode.jconfig.model.BasicConfiguration;
-import com.googlecode.jconfig.model.IConfiguration;
+import com.google.code.jconfig.ConfigurationException;
+import com.google.code.jconfig.ConfigurationManager;
+import com.google.code.jconfig.listener.IConfigurationChangeListener;
+import com.google.code.jconfig.model.BasicConfiguration;
+import com.google.code.jconfig.model.IConfiguration;
 
 import junit.framework.TestCase;
 
@@ -233,7 +233,7 @@ import junit.framework.TestCase;
 public class ConfigurationManagerTest extends TestCase {
 	
 	/**
-	 * Test method for {@link com.googlecode.jconfig.ConfigurationManager#configure(java.util.Map, java.lang.String)}.
+	 * Test method for {@link com.com.google.code.jconfig.ConfigurationManager#configure(java.util.Map, java.lang.String)}.
 	 */
 	public void testConfigure() {
 		String filepath = getClass().getClassLoader().getResource("configuration.xml").getPath();

@@ -1,20 +1,20 @@
-package com.googlecode.jconfig.reader.plugins;
+package com.google.code.jconfig.reader.plugins;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.jconfig.CacheConfiguration;
-import com.googlecode.jconfig.model.IConfiguration;
-import com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader;
-import com.googlecode.jconfig.reader.plugins.IConfigurationPlugin;
+import com.google.code.jconfig.CacheConfiguration;
+import com.google.code.jconfig.model.IConfiguration;
+import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
+import com.google.code.jconfig.reader.plugins.IConfigurationPlugin;
 
 
 public class CacheConfigurationPlugin implements IConfigurationPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.plugins.IConfigurationPlugin#readConfiguration(com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader)
+	 * @see com.google.code.jconfig.reader.plugins.IConfigurationPlugin#readConfiguration(com.google.code.jconfig.reader.hierarchical.IHierarchicalReader)
 	 */
 	public IConfiguration readConfiguration(IHierarchicalReader reader) {
 		
@@ -22,7 +22,7 @@ public class CacheConfigurationPlugin implements IConfigurationPlugin {
 		 * Il reader inizia dall'elemento <configuration> a scendere e contiene
 		 * solamente il frammento di xml necessario per questa configurazione .
 		 * 
-		 * 	<configuration id="cache" plugin="com.googlecode.jconfig.reader.plugins.CacheConfigurationPlugin">
+		 * 	<configuration id="cache" plugin="com.google.code.jconfig.reader.plugins.CacheConfigurationPlugin">
 		 *		<servers>
 		 *			<server name="server 1" port="1000"/>
 		 *			<server name="server 2" port="1010"/>

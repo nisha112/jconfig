@@ -1,10 +1,10 @@
-package com.googlecode.jconfig;
+package com.google.code.jconfig;
 
 
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import com.googlecode.jconfig.model.AbstractConfiguration;
+import com.google.code.jconfig.model.AbstractConfiguration;
 
 public class CacheConfiguration extends AbstractConfiguration {
 
