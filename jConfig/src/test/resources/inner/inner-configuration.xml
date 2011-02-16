@@ -1,6 +1,6 @@
 <configurations>
 	
-	<configuration id="inner_props" plugin="com.googlecode.jconfig.reader.plugins.PropertyConfigurationPlugin">
+	<configuration id="inner_props" plugin="com.google.code.jconfig.reader.plugins.PropertyConfigurationPlugin">
 		<property key="inner-key-1" value="inner value 1" />
 		<property key="inner-key-2" value="inner value 2" />
 		<property key="inner-key-3" value="inner value 3" />
