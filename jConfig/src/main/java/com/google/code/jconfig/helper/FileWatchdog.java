@@ -18,13 +18,13 @@
  * 
  */
 
-package com.googlecode.jconfig.helper;
+package com.google.code.jconfig.helper;
 
 
 import java.io.File;
 
-import com.googlecode.jconfig.ConfigurationException;
-import com.googlecode.jconfig.ConfigurationManager;
+import com.google.code.jconfig.ConfigurationException;
+import com.google.code.jconfig.ConfigurationManager;
 
 /**
  * <p>

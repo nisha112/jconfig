@@ -18,7 +18,7 @@
  * 
  */
 
-package com.googlecode.jconfig.reader.hierarchical;
+package com.google.code.jconfig.reader.hierarchical;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +42,7 @@ public class HierarchicalReader implements IHierarchicalReader {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader#getAttribute(java.lang.String)
+	 * @see com.google.code.jconfig.reader.hierarchical.IHierarchicalReader#getAttribute(java.lang.String)
 	 */
 	public String getAttribute(String name) {
 		return attributes.get(name);
@@ -50,7 +50,7 @@ public class HierarchicalReader implements IHierarchicalReader {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader#getAttributeCount()
+	 * @see com.google.code.jconfig.reader.hierarchical.IHierarchicalReader#getAttributeCount()
 	 */
 	public int getAttributeCount() {
 		return attributes.size();
@@ -58,7 +58,7 @@ public class HierarchicalReader implements IHierarchicalReader {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader#getAttributeNames()
+	 * @see com.google.code.jconfig.reader.hierarchical.IHierarchicalReader#getAttributeNames()
 	 */
 	public Iterator<String> getAttributeNames() {
 		return attributes.keySet().iterator();
@@ -66,7 +66,7 @@ public class HierarchicalReader implements IHierarchicalReader {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader#getNodeName()
+	 * @see com.google.code.jconfig.reader.hierarchical.IHierarchicalReader#getNodeName()
 	 */
 	public String getNodeName() {
 		return nodeName;
@@ -74,7 +74,7 @@ public class HierarchicalReader implements IHierarchicalReader {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader#getValue()
+	 * @see com.google.code.jconfig.reader.hierarchical.IHierarchicalReader#getValue()
 	 */
 	public String getValue() {
 		return value;
@@ -82,7 +82,7 @@ public class HierarchicalReader implements IHierarchicalReader {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader#hasChildren()
+	 * @see com.google.code.jconfig.reader.hierarchical.IHierarchicalReader#hasChildren()
 	 */
 	public boolean hasChildren() {
 		return ( (children != null) && !children.isEmpty() );
@@ -90,7 +90,7 @@ public class HierarchicalReader implements IHierarchicalReader {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader#getChildren()
+	 * @see com.google.code.jconfig.reader.hierarchical.IHierarchicalReader#getChildren()
 	 */
 	public List<IHierarchicalReader> getChildren() {
 		return children;

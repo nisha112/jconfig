@@ -18,10 +18,10 @@
  *
  */
 
-package com.googlecode.jconfig.reader.plugins;
+package com.google.code.jconfig.reader.plugins;
 
-import com.googlecode.jconfig.model.IConfiguration;
-import com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader;
+import com.google.code.jconfig.model.IConfiguration;
+import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 
 /**
  * <p>

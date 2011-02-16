@@ -17,7 +17,7 @@
  * limitations under the License.
  * 
  */
-package com.googlecode.jconfig;
+package com.google.code.jconfig;
 
 /**
  * <p>

@@ -18,17 +18,17 @@
  * 
  */
 
-package com.googlecode.jconfig;
+package com.google.code.jconfig;
 
 import java.util.*;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import com.googlecode.jconfig.helper.FileWatchdog;
-import com.googlecode.jconfig.listener.IConfigurationChangeListener;
-import com.googlecode.jconfig.model.IConfiguration;
-import com.googlecode.jconfig.reader.ConfigurationReader;
+import com.google.code.jconfig.helper.FileWatchdog;
+import com.google.code.jconfig.listener.IConfigurationChangeListener;
+import com.google.code.jconfig.model.IConfiguration;
+import com.google.code.jconfig.reader.ConfigurationReader;
 
 /**
  * <p>

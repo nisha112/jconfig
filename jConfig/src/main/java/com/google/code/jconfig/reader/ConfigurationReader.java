@@ -18,7 +18,7 @@
  *
  */
 
-package com.googlecode.jconfig.reader;
+package com.google.code.jconfig.reader;
 
 
 import java.io.File;
@@ -34,11 +34,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.googlecode.jconfig.ConfigurationException;
-import com.googlecode.jconfig.model.IConfiguration;
-import com.googlecode.jconfig.reader.hierarchical.HierarchicalReader;
-import com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader;
-import com.googlecode.jconfig.reader.plugins.IConfigurationPlugin;
+import com.google.code.jconfig.ConfigurationException;
+import com.google.code.jconfig.model.IConfiguration;
+import com.google.code.jconfig.reader.hierarchical.HierarchicalReader;
+import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
+import com.google.code.jconfig.reader.plugins.IConfigurationPlugin;
 
 /**
  * <p>
@@ -85,7 +85,7 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.IConfigurationReader#readConfiguration(java.lang.String)
+	 * @see com.google.code.jconfig.reader.IConfigurationReader#readConfiguration(java.lang.String)
 	 */
 	public Map<String, IConfiguration> readConfiguration(String absolutePath) throws ConfigurationException {
 		try {

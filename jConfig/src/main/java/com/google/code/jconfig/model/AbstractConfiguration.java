@@ -18,7 +18,7 @@
  * 
  */
 
-package com.googlecode.jconfig.model;
+package com.google.code.jconfig.model;
 
 import com.rits.cloning.Cloner;
 
@@ -36,7 +36,7 @@ public abstract class AbstractConfiguration implements IConfiguration {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.model.IConfiguration#getId()
+	 * @see com.google.code.jconfig.model.IConfiguration#getId()
 	 */
 	public String getId() {
 		return id;

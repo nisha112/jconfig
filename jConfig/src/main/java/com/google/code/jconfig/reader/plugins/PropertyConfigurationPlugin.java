@@ -18,14 +18,14 @@
  *
  */
 
-package com.googlecode.jconfig.reader.plugins;
+package com.google.code.jconfig.reader.plugins;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.googlecode.jconfig.model.BasicConfiguration;
-import com.googlecode.jconfig.model.IConfiguration;
-import com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader;
+import com.google.code.jconfig.model.BasicConfiguration;
+import com.google.code.jconfig.model.IConfiguration;
+import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 
 
 /**
@@ -38,7 +38,7 @@ public class PropertyConfigurationPlugin implements IConfigurationPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.plugins.IConfigurationPlugin#readConfiguration(com.googlecode.jconfig.reader.hierarchical.IHierarchicalReader)
+	 * @see com.google.code.jconfig.reader.plugins.IConfigurationPlugin#readConfiguration(com.google.code.jconfig.reader.hierarchical.IHierarchicalReader)
 	 */
 	public IConfiguration readConfiguration(IHierarchicalReader reader) {
 		BasicConfiguration configuration = null;

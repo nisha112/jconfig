@@ -18,7 +18,7 @@
  * 
  */
 
-package com.googlecode.jconfig.model;
+package com.google.code.jconfig.model;
 
 /**
  * <p>

@@ -18,7 +18,7 @@
  * 
  */
 
-package com.googlecode.jconfig.reader.hierarchical;
+package com.google.code.jconfig.reader.hierarchical;
 
 import java.util.Iterator;
 import java.util.List;

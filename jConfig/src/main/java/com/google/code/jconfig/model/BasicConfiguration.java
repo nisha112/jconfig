@@ -17,7 +17,7 @@
  * limitations under the License.
  * 
  */
-package com.googlecode.jconfig.model;
+package com.google.code.jconfig.model;
 
 
 import java.util.Map;

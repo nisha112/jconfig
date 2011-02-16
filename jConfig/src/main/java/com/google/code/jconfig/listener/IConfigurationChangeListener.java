@@ -17,10 +17,10 @@
  * limitations under the License.
  * 
  */
-package com.googlecode.jconfig.listener;
+package com.google.code.jconfig.listener;
 
-import com.googlecode.jconfig.ConfigurationManager;
-import com.googlecode.jconfig.model.IConfiguration;
+import com.google.code.jconfig.ConfigurationManager;
+import com.google.code.jconfig.model.IConfiguration;
 
 /**
  * <p>

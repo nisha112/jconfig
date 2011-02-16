@@ -18,13 +18,13 @@
  *
  */
 
-package com.googlecode.jconfig.reader;
+package com.google.code.jconfig.reader;
 
 
 import java.util.Map;
 
-import com.googlecode.jconfig.ConfigurationException;
-import com.googlecode.jconfig.model.IConfiguration;
+import com.google.code.jconfig.ConfigurationException;
+import com.google.code.jconfig.model.IConfiguration;
 
 /**
  * <p>
