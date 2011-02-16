@@ -21,7 +21,6 @@
 package com.googlecode.jconfig.reader;
 
 
-import java.io.InputStream;
 import java.util.Map;
 
 import com.googlecode.jconfig.ConfigurationException;
@@ -42,9 +41,9 @@ public interface IConfigurationReader {
 	 *   {@link IConfiguration}.
 	 * </p>
 	 * 
-	 * @param inputStream the configuration file stream
+	 * @param absolutePath the configuration file
 	 * @return a map of {@link IConfiguration}
 	 * @throws ConfigurationException
 	 */
-	public Map<String, IConfiguration> readConfiguration(InputStream inputStream) throws ConfigurationException;
+	public Map<String, IConfiguration> readConfiguration(String absolutePath) throws ConfigurationException;
 }

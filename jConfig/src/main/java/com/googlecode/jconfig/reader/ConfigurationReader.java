@@ -21,8 +21,8 @@
 package com.googlecode.jconfig.reader;
 
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -49,6 +49,7 @@ import com.googlecode.jconfig.reader.plugins.IConfigurationPlugin;
  */
 public class ConfigurationReader extends DefaultHandler implements IConfigurationReader {
 
+	private StringBuilder currentConfigPath;
 	private SAXParser parser;
 	private ConfigurationReaderHandler readerHandler;
 	private Map<String, IConfiguration> configurations;
@@ -57,11 +58,12 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 	
 	private enum ELEMENT_TAGS {
 		CONFIGURATIONS,
+			IMPORT,
 			CONFIGURATION,
 	}
 	
 	private enum ATTRIBUTES {
-		plugin
+		plugin, file
 	}
 	
 	/**
@@ -71,6 +73,7 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 	public ConfigurationReader() throws ConfigurationException {
 		logger.debug("Initializing configuration reader");
 		try {
+			currentConfigPath = new StringBuilder();
 			parser = SAXParserFactory.newInstance().newSAXParser();
 			readerHandler = new ConfigurationReaderHandler();
 		} catch (ParserConfigurationException e) {
@@ -82,12 +85,15 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.googlecode.jconfig.reader.IConfigurationReader#readConfiguration(java.io.InputStream)
+	 * @see com.googlecode.jconfig.reader.IConfigurationReader#readConfiguration(java.lang.String)
 	 */
-	public Map<String, IConfiguration> readConfiguration(InputStream inputStream) throws ConfigurationException {
+	public Map<String, IConfiguration> readConfiguration(String absolutePath) throws ConfigurationException {
 		try {
-			logger.debug("Reading configuration");
-			parser.parse(inputStream, readerHandler);
+			logger.debug("Reading configuration: " + absolutePath);
+			File configurationFile = new File(absolutePath);
+			currentConfigPath.append(configurationFile.getParent())
+			                 .append(File.separator);
+			parser.parse(configurationFile, readerHandler);
 		} catch (SAXException e) {
 			logger.error(e.getMessage(), e);
 			configurations.clear();
@@ -123,6 +129,18 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 			
 			if(tagName.equals(ELEMENT_TAGS.CONFIGURATIONS.name())) {
 				// DO NOTHING
+			} else if(tagName.equals(ELEMENT_TAGS.IMPORT.name())) {
+				String importedConfiguration = attributes.getValue(ATTRIBUTES.file.name());
+				String absolutePath = currentConfigPath.append(importedConfiguration).toString();
+				try {
+					ConfigurationReader innerReader = new ConfigurationReader();
+					configurations.putAll(innerReader.readConfiguration(absolutePath));
+				} catch(ConfigurationException e) {
+					logger.error(e.getMessage(), e);
+					// TODO: if imported conf is broken what to do??
+					//   go ahead or delete the current conf process ??? 
+				}
+				
 			} else if(tagName.equals(ELEMENT_TAGS.CONFIGURATION.name())) {
 				String pluginClass = attributes.getValue(ATTRIBUTES.plugin.name());
 				try {
@@ -154,6 +172,8 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 				IHierarchicalReader rootConfiguration = configurationPluginStack.pop();
 				IConfiguration configuration = currentPlugin.readConfiguration(rootConfiguration);
 				configurations.put(configuration.getId(), configuration);
+			} else if(tagName.equals(ELEMENT_TAGS.IMPORT.name())) {
+				// DO NOTHING
 			} else {
 				IHierarchicalReader child = configurationPluginStack.pop();
 				((HierarchicalReader)configurationPluginStack.peek()).addChild(child);

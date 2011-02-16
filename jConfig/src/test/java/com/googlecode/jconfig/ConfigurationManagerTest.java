@@ -243,7 +243,7 @@ public class ConfigurationManagerTest extends TestCase {
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-		
+	
 		// NOTA: il processo di lettura della configurazione dura 11s perche nel
 		//       CacheConfigurationPlugin cerco di creare 3 socket ad indirizzi
 		//       che non esistono!!!!

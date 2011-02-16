@@ -20,9 +20,6 @@
 
 package com.googlecode.jconfig;
 
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -135,7 +132,7 @@ public class ConfigurationManager {
 	
 	private void doConfiguration() {
 		try {
-			activeConfigurations = readConfiguration();
+			activeConfigurations = configurationReader.readConfiguration(filepath);
 			notifyListeners();
 		} catch (ConfigurationException e) {
 			/* TODO: da gestire il comportamento da tenere.
@@ -160,18 +157,5 @@ public class ConfigurationManager {
 				logger.error("Received an uncaught exception", e);
 			}
 		}
-	}
-	
-	private Map<String, IConfiguration> readConfiguration() throws ConfigurationException {
-		logger.debug("Reading configuration file");
-		Map<String, IConfiguration> configurations;
-		try {
-			configurations = configurationReader.readConfiguration(new FileInputStream(filepath));
-		} catch (FileNotFoundException e) {
-			logger.error(e.getMessage(), e);
-			throw new ConfigurationException(e.getMessage(), e.getCause());
-		}
-			
-		return configurations;
 	}
 }

@@ -1,5 +1,7 @@
 <configurations>
 	
+	<import file="inner\inner-configuration.xml" />
+	
 	<configuration id="general" plugin="com.googlecode.jconfig.reader.plugins.PropertyConfigurationPlugin">
 		<property key="key-1" value="value 1" />
 		<property key="key-2" value="value 2" />
