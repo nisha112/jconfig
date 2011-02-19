@@ -9,7 +9,7 @@
 
 	<name>jConfig</name>
 	<description>A configuration manager fully customizable by plugins</description>
-	<url>http://maven.apache.org</url>
+	<url>http://code.google.com/p/jconfig/</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
