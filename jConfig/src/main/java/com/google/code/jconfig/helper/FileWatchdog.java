@@ -23,6 +23,8 @@ package com.google.code.jconfig.helper;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
+
 import com.google.code.jconfig.ConfigurationException;
 import com.google.code.jconfig.ConfigurationManager;
 
@@ -42,6 +44,8 @@ public class FileWatchdog extends Thread {
 	private long lastModify = 0L;	
 	private boolean interrupted = false;
 	
+	private static final Logger logger = Logger.getLogger(FileWatchdog.class);
+	
 	/**
 	 * <p>
 	 *    Constructor with the file absolute path to watch.
@@ -50,6 +54,7 @@ public class FileWatchdog extends Thread {
 	 * @param filename the file absolute path to watch
 	 */
 	public FileWatchdog(String filename) {
+		logger.info("Start watching file changes on: " + filename);
 		file = new File(filename);
 		setDaemon(true);
 		checkAndConfigure();
@@ -84,6 +89,7 @@ public class FileWatchdog extends Thread {
 		try {
 			file.exists();
 		} catch(SecurityException e) {
+			logger.error("File watched doesn't exist. Stop watching!!!");
 			interrupted = true;
 			return;
 		}
@@ -92,6 +98,7 @@ public class FileWatchdog extends Thread {
 		if(lastModify < l) {
 			lastModify = l;
 			try {
+				logger.info("Found configuration changes.");
 				// passing null because instance is already configured
 				// used only for reloading configuration
 				ConfigurationManager.configureAndWatch(null, null);

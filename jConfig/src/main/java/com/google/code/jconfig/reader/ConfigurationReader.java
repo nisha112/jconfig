@@ -129,7 +129,9 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 			
 			if(tagName.equals(ELEMENT_TAGS.CONFIGURATIONS.name())) {
 				// DO NOTHING
+				logger.debug("Found <configurations> tag start.");
 			} else if(tagName.equals(ELEMENT_TAGS.IMPORT.name())) {
+				logger.debug("Found <import> tag start.");
 				String importedConfiguration = attributes.getValue(ATTRIBUTES.file.name());
 				String absolutePath = currentConfigPath.append(importedConfiguration).toString();
 				try {
@@ -142,6 +144,7 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 				}
 				
 			} else if(tagName.equals(ELEMENT_TAGS.CONFIGURATION.name())) {
+				logger.debug("Found <configuration> tag start.");
 				String pluginClass = attributes.getValue(ATTRIBUTES.plugin.name());
 				try {
 					currentPlugin = newPlugin(pluginClass);
@@ -150,6 +153,7 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 				}
 				configurationPluginStack.push(createHierarchicalReader(qName, attributes));
 			} else { 
+				logger.debug("Found <" + qName + "> tag start.");
 				configurationPluginStack.push(createHierarchicalReader(qName, attributes));
 			}
 		}
@@ -168,13 +172,17 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 			
 			if(tagName.equals(ELEMENT_TAGS.CONFIGURATIONS.name())) {
 				// DO NOTHING
+				logger.debug("Found <configurations> tag end.");
 			} else if(tagName.equals(ELEMENT_TAGS.CONFIGURATION.name())) {
+				logger.debug("Found <configuration> tag end.");
 				IHierarchicalReader rootConfiguration = configurationPluginStack.pop();
 				IConfiguration configuration = currentPlugin.readConfiguration(rootConfiguration);
 				configurations.put(configuration.getId(), configuration);
 			} else if(tagName.equals(ELEMENT_TAGS.IMPORT.name())) {
 				// DO NOTHING
+				logger.debug("Found <import> tag end.");
 			} else {
+				logger.debug("Found <" + qName + "> tag end.");
 				IHierarchicalReader child = configurationPluginStack.pop();
 				((HierarchicalReader)configurationPluginStack.peek()).addChild(child);
 			}

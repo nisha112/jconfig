@@ -51,9 +51,10 @@ public class ConfigurationManager {
 	private ConfigurationManager() throws ConfigurationException { }
 	
 	private ConfigurationManager(Map<String, IConfigurationChangeListener> listeners, String filepath) throws ConfigurationException {
-		logger.info("ConfigurationManager initialized with this parameters:");
-		logger.info("\tconfiguration: " + filepath);
-		logger.info("\tregistered listeners: " + listeners);
+		logger.info("******* ConfigurationManager initialization *******");
+		logger.info(" -> configuration: " + filepath);
+		logger.info(" -> registered listeners: " + listeners);
+		logger.info("**************************************************");
 		
 		this.filepath = filepath;
 		activeListeners = listeners;
@@ -126,8 +127,8 @@ public class ConfigurationManager {
 	 * </p>
 	 */
 	public static void shutdown() {
+		logger.info("Shutdown resources");
 		watchdog.interrupt();
-		//TODO: clear all the fields.
 	}
 	
 	private void doConfiguration() {
