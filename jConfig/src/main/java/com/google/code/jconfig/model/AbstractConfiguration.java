@@ -24,7 +24,15 @@ import com.rits.cloning.Cloner;
 
 /**
  * <p>
- *    Allows to manage application configurations from an external file.
+ *    This abstract base class expose an utility method for deep cloning
+ *    configuration instances to be returned in order to avoid external changes
+ *    to the configuration itself.
+ * </p>
+ * 
+ * <p>
+ *    All the concrete instance of {@link IConfiguration} should extends this
+ *    class and should also use the <em>deepClone(..)</em> method for returning
+ *    a cloned instance of their configuration.
  * </p>
  *
  * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
@@ -32,7 +40,21 @@ import com.rits.cloning.Cloner;
 public abstract class AbstractConfiguration implements IConfiguration {
 
 	protected String id;
-	protected static final Cloner cloner = new Cloner();
+	private static final Cloner cloner = new Cloner();
+	
+	/**
+	 * <p>
+	 *    Utility method for deep cloning instance of <em>configuration</em>
+	 *    in order to prevent possible changes to the configuration itself.
+	 * </p>
+	 * 
+	 * @param <T> cloned instance to be returned.
+	 * @param configuration the instance to be cloned.
+	 * @return a deep cloned instance of <em>configuration</em>
+	 */
+	protected <T> T deepClone(T configuration) {
+		return cloner.deepClone(configuration);
+	}
 	
 	/*
 	 * (non-Javadoc)

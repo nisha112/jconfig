@@ -78,6 +78,6 @@ public class BasicConfiguration extends AbstractConfiguration {
 	 * @return a cloned version of the properties of this configuration.
 	 */
 	public Map<String, String> getProperties() {
-		return cloner.deepClone(properties);
+		return deepClone(properties);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * @(#)CacheConfiguration.java          Data: 25/feb/2011
+ * @(#)ServerBean.java          Data: 25/feb/2011
  *
  *
  * Copyright 2011 Gabriele Fedeli
@@ -18,23 +18,28 @@
  * 
  */
 
-package com.google.code.jconfig;
+package com.google.code.jconfig.model;
 
-import java.util.List;
+public class ServerBean {
 
-import com.google.code.jconfig.model.AbstractConfiguration;
-import com.google.code.jconfig.model.ServerBean;
-
-public class CacheConfiguration extends AbstractConfiguration {
-
-	private List<ServerBean> servers;
+	private String host;
+	private Integer port;
 	
-	public CacheConfiguration(String id, List<ServerBean> servers) {
-		this.id = id;
-		this.servers = servers;
+	public ServerBean(String host, Integer port) {
+		this.host = host;
+		this.port = port;
 	}
 
-	public List<ServerBean> getServers() {
-		return deepClone(servers);
+	public String getHost() {
+		return host;
+	}
+
+	public Integer getPort() {
+		return port;
+	}
+
+	@Override
+	public String toString() {
+		return "ServerBean [host=" + host + ", port=" + port + "]";
 	}
 }
