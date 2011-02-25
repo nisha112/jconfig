@@ -30,6 +30,23 @@ import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 
 /**
  * <p>
+ *    A basic property plugin configuration.
+ * </p>
+ *
+ * <p>
+ *    An example of what type of configuration this plugin could manage:
+ *    
+ *    <pre>
+ *       {@code
+ *          <configurations>
+ *             <configuration id="general" plugin="com.google.code.jconfig.reader.plugins.PropertyConfigurationPlugin">
+ *                <property key="key-1" value="value 1" />
+ *                <property key="key-2" value="value 2" />
+ *             </configuration>
+ *          </configurations>
+ *       }
+ *    </pre>
+ *    
  * </p>
  *
  * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)

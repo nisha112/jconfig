@@ -25,6 +25,8 @@ import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 
 /**
  * <p>
+ *    This interface represents a custom configuration plugin for parsing custom
+ *    defined configuration.
  * </p>
  *
  * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
@@ -32,9 +34,14 @@ import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 public interface IConfigurationPlugin {
 
 	/**
+	 * <p>
+	 *    Handle a particular user defined configuration fragment and returns
+	 *    an instance of {@link IConfiguration}.
+	 * </p>
 	 * 
-	 * @param reader
-	 * @return
+	 * @param reader a hierarchical reader for the current configuration handled
+	 *               by this plugin.
+	 * @return a {@link IConfiguration} instance.
 	 */
 	public IConfiguration readConfiguration(IHierarchicalReader reader);
 }
