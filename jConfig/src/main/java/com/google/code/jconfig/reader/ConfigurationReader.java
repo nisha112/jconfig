@@ -35,6 +35,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.code.jconfig.ConfigurationException;
+import com.google.code.jconfig.helper.WatchdogService;
 import com.google.code.jconfig.model.IConfiguration;
 import com.google.code.jconfig.reader.hierarchical.HierarchicalReader;
 import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
@@ -134,6 +135,8 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 				logger.debug("Found <import> tag start.");
 				String importedConfiguration = attributes.getValue(ATTRIBUTES.file.name());
 				String absolutePath = currentConfigPath.append(importedConfiguration).toString();
+				/* add the imported resource to the list of the watched files. */
+				WatchdogService.addToWatch(absolutePath);
 				try {
 					ConfigurationReader innerReader = new ConfigurationReader();
 					configurations.putAll(innerReader.readConfiguration(absolutePath));

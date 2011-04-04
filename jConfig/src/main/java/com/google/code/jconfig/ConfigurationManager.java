@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 
 import com.google.code.jconfig.helper.FileWatchdog;
+import com.google.code.jconfig.helper.WatchdogService;
 import com.google.code.jconfig.listener.IConfigurationChangeListener;
 import com.google.code.jconfig.model.IConfiguration;
 import com.google.code.jconfig.reader.ConfigurationReader;
@@ -43,8 +44,8 @@ public class ConfigurationManager {
 	private ConfigurationReader configurationReader;
 	private Map<String, IConfiguration> activeConfigurations;
 	private Map<String, IConfigurationChangeListener> activeListeners;
+	private static boolean parseInProgress = false;
 	
-	private static FileWatchdog watchdog;
 	private static ConfigurationManager instance;
 	private static final Logger logger = Logger.getLogger(ConfigurationManager.class);
 	
@@ -91,11 +92,7 @@ public class ConfigurationManager {
 	 * @throws ConfigurationException
 	 */
 	public static void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath) throws ConfigurationException {
-		if(instance == null) {
-			configureAndWatch(listeners, filepath, FileWatchdog.DEFAULT_DELAY);
-		} else {
-			instance.doConfiguration();
-		}
+		configureAndWatch(listeners, filepath, FileWatchdog.DEFAULT_DELAY);
 	}
 	
 	/**
@@ -113,11 +110,11 @@ public class ConfigurationManager {
 	public static void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath, long delay) throws ConfigurationException {
 		if(instance == null) {
 			instance = new ConfigurationManager(listeners, filepath);
-			watchdog = new FileWatchdog(filepath);
-			watchdog.setDelay(delay);
-			watchdog.start();
+			WatchdogService.addToWatch(filepath, delay);
 		} else {
-			instance.doConfiguration();
+			if( !parseInProgress ) {
+				instance.doConfiguration();
+			}
 		}
 	}
 	
@@ -128,12 +125,14 @@ public class ConfigurationManager {
 	 */
 	public static void shutdown() {
 		logger.info("Shutdown resources");
-		watchdog.interrupt();
+		WatchdogService.shutdown();
 	}
 	
 	private void doConfiguration() {
 		try {
+			parseInProgress = true;
 			activeConfigurations = configurationReader.readConfiguration(filepath);
+			parseInProgress = false;
 			notifyListeners();
 		} catch (ConfigurationException e) {
 			/* TODO: da gestire il comportamento da tenere.

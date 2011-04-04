@@ -55,9 +55,6 @@ public class ConfigurationManagerTest extends TestCase {
 			e1.printStackTrace();
 		}
 	
-		// NOTA: il processo di lettura della configurazione dura 11s perche nel
-		//       CacheConfigurationPlugin cerco di creare 3 socket ad indirizzi
-		//       che non esistono!!!!
 		Map<String, IConfigurationChangeListener> listeners = new HashMap<String, IConfigurationChangeListener>();
 		listeners.put("general", new TestConfigurationChangeListener());
 		listeners.put("cache", new TestCacheConfigurationChangeListener());
