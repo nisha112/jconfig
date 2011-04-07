@@ -37,18 +37,21 @@ import org.apache.log4j.Logger;
 public abstract class WatchdogService {
 
 	private static final Logger logger = Logger.getLogger(WatchdogService.class);
-	private static Map<String, FileWatchdog> activeWatchdogs = new HashMap<String, FileWatchdog>();
+	
+	public static final long DEFAULT_DELAY = 60000; // 60 seconds delay
+	private static Map<Integer, FileWatchdog> activeWatchdogs = new HashMap<Integer, FileWatchdog>();
+	private static long firstDelayUsed = DEFAULT_DELAY;
 	
 	/**
 	 * <p>
 	 *    Add the <em>file</em> to the current list of watched resources with 
-	 *    default delays.
+	 *    the delays used for the very first resource added to the watch list.
 	 * </p>
 	 * 
 	 * @param file the file to be watched
 	 */
 	public static void addToWatch(String file) {
-		addToWatch(file, FileWatchdog.DEFAULT_DELAY);
+		addToWatch(file, firstDelayUsed);
 	}
 	
 	/**
@@ -61,12 +64,13 @@ public abstract class WatchdogService {
 	 * @param delay teh delay in ms between two watch. 
 	 */
 	public static void addToWatch(String file, long delay) {
-		if( !activeWatchdogs.containsKey(file) ) {
+		int hash = file.hashCode();
+		firstDelayUsed = ( activeWatchdogs.isEmpty()? delay : firstDelayUsed );
+		if( !activeWatchdogs.containsKey(hash) ) {
 			logger.info("Watching file: " + file);
-			FileWatchdog fileWatchdog = new FileWatchdog(file);
-			fileWatchdog.setDelay(delay);
+			FileWatchdog fileWatchdog = new FileWatchdog(file, delay);
 			fileWatchdog.start();
-			activeWatchdogs.put(file, fileWatchdog);
+			activeWatchdogs.put(hash, fileWatchdog);
 		} else {
 			logger.warn("File <" + file + "> already present in the watch list.");
 		}

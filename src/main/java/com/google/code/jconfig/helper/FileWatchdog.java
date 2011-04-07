@@ -37,8 +37,7 @@ import com.google.code.jconfig.ConfigurationManager;
  */
 public class FileWatchdog extends Thread {
 
-	public static final long DEFAULT_DELAY = 60000; // 60 seconds delay
-	private long delay = DEFAULT_DELAY;
+	private long delay = 0L;
 	
 	private File file;
 	private long lastModify = 0L;	
@@ -53,33 +52,12 @@ public class FileWatchdog extends Thread {
 	 * 
 	 * @param filename the file absolute path to watch
 	 */
-	public FileWatchdog(String filename) {
+	public FileWatchdog(String filename, long delay) {
 		logger.info("Start watching file changes on: " + filename);
 		file = new File(filename);
+		this.delay = delay;
 		setDaemon(true);
 		checkAndConfigure();
-	}
-	
-	/**
-	 * <p>
-	 *    Returns the delay in ms.
-	 * </p>
-	 * 
-	 * @return the delay in ms
-	 */
-	public long getDelay() {
-		return delay;
-	}
-
-	/**
-	 * <p>
-	 *    Set the delay in ms.
-	 * </p>
-	 * 
-	 * @param delay the delay in ms
-	 */
-	public void setDelay(long delay) {
-		this.delay = delay;
 	}
 
 	/**

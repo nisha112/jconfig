@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import com.google.code.jconfig.helper.FileWatchdog;
 import com.google.code.jconfig.helper.WatchdogService;
 import com.google.code.jconfig.listener.IConfigurationChangeListener;
 import com.google.code.jconfig.model.IConfiguration;
@@ -92,7 +91,7 @@ public class ConfigurationManager {
 	 * @throws ConfigurationException
 	 */
 	public static void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath) throws ConfigurationException {
-		configureAndWatch(listeners, filepath, FileWatchdog.DEFAULT_DELAY);
+		configureAndWatch(listeners, filepath, WatchdogService.DEFAULT_DELAY);
 	}
 	
 	/**
