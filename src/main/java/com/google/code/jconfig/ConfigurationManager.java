@@ -25,10 +25,13 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import com.google.code.jconfig.exception.ConfigurationException;
+import com.google.code.jconfig.factory.ConfigurationReaderFactory;
 import com.google.code.jconfig.helper.WatchdogService;
 import com.google.code.jconfig.listener.IConfigurationChangeListener;
+import com.google.code.jconfig.model.ConfigurationInfo;
 import com.google.code.jconfig.model.IConfiguration;
-import com.google.code.jconfig.reader.ConfigurationReader;
+import com.google.code.jconfig.reader.IConfigurationReader;
 
 /**
  * <p>
@@ -40,11 +43,10 @@ import com.google.code.jconfig.reader.ConfigurationReader;
 public class ConfigurationManager {
 
 	private String filepath;
-	private ConfigurationReader configurationReader;
-	private Map<String, IConfiguration> activeConfigurations;
+	private ConfigurationInfo currentConfigurationInfo;
 	private Map<String, IConfigurationChangeListener> activeListeners;
-	private static boolean parseInProgress = false;
 	
+	private static long delay;
 	private static ConfigurationManager instance;
 	private static final Logger logger = Logger.getLogger(ConfigurationManager.class);
 	
@@ -58,7 +60,6 @@ public class ConfigurationManager {
 		
 		this.filepath = filepath;
 		activeListeners = listeners;
-		configurationReader = new ConfigurationReader();
 	}
 	
 	/**
@@ -71,11 +72,10 @@ public class ConfigurationManager {
 	 * @param filepath the real path of the configuration file
 	 * @throws ConfigurationException
 	 */
-	public static void configure(Map<String, IConfigurationChangeListener> listeners, String filepath) throws ConfigurationException {
+	public static synchronized void configure(Map<String, IConfigurationChangeListener> listeners, String filepath) throws ConfigurationException {
 		if(instance == null) {
 			instance = new ConfigurationManager(listeners, filepath);
-		} else {
-			instance.doConfiguration();
+			instance.doConfigure();
 		}
 	}
 	
@@ -106,14 +106,11 @@ public class ConfigurationManager {
 	 * @param delay the time in millis for checking configuration changes
 	 * @throws ConfigurationException
 	 */
-	public static void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath, long delay) throws ConfigurationException {
+	public static synchronized void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath, long userDelay) throws ConfigurationException {
 		if(instance == null) {
+			delay = userDelay;
 			instance = new ConfigurationManager(listeners, filepath);
-			WatchdogService.addToWatch(filepath, delay);
-		} else {
-			if( !parseInProgress ) {
-				instance.doConfiguration();
-			}
+			instance.doConfigure();
 		}
 	}
 	
@@ -127,20 +124,11 @@ public class ConfigurationManager {
 		WatchdogService.shutdown();
 	}
 	
-	private void doConfiguration() {
-		try {
-			parseInProgress = true;
-			activeConfigurations = configurationReader.readConfiguration(filepath);
-			parseInProgress = false;
-			notifyListeners();
-		} catch (ConfigurationException e) {
-			/* TODO: da gestire il comportamento da tenere.
-			 * se è la prima volta e non ho caricato alcuna configurazione
-			 * lanciare mega super eccezione, altrimenti loggare l'errore
-			 * e mantenere la vecchia conf.
-			 */
-			logger.error(e.getMessage(), e);
-		}
+	public void doConfigure() throws ConfigurationException {
+		IConfigurationReader configurationReader = ConfigurationReaderFactory.getReader();
+		currentConfigurationInfo = configurationReader.readConfiguration(filepath);
+		WatchdogService.watch(instance, currentConfigurationInfo.getConfFileList(), delay);
+		notifyListeners();
 	}
 	
 	private void notifyListeners() {
@@ -149,9 +137,10 @@ public class ConfigurationManager {
 		while(itr.hasNext()) {
 			Entry<String, IConfigurationChangeListener> entry = itr.next();
 			logger.debug("Notifying listener <" + entry.getValue().getClass().getName() + "> for configuratio id <" + entry.getKey() + ">");
+			Map<String, IConfiguration> activeConfigurations = currentConfigurationInfo.getConfigurationMap();
 			try {
 				entry.getValue().loadConfiguration(activeConfigurations.get(entry.getKey()));
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				// for not terminating the watchdog thread on configuration changes.
 				logger.error("Received an uncaught exception", e);
 			}

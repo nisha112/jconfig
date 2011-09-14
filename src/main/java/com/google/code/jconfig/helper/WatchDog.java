@@ -1,5 +1,5 @@
 /*
- * @(#)FileWatchdog.java          Data: 23/gen/2011
+ * @(#)WatchDog.java          Data: 12/set/2011
  *
  *
  * Copyright 2011 Gabriele Fedeli
@@ -15,35 +15,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 
 package com.google.code.jconfig.helper;
 
-
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
-import com.google.code.jconfig.ConfigurationException;
 import com.google.code.jconfig.ConfigurationManager;
+import com.google.code.jconfig.exception.ConfigurationException;
 
-/**
- * <p>
- *   This class tracks the changes happened to the specified config file. 
- * </p>
- *
- * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
- */
-public class FileWatchdog extends Thread {
+public class WatchDog  extends Thread {
 
 	private long delay = 0L;
-	
-	private File file;
-	private long lastModify = 0L;	
+	private ConfigurationManager singleInstance;
+	private Collection<FileInfo> fileToBeWatched;
 	private boolean interrupted = false;
 	
-	private static final Logger logger = Logger.getLogger(FileWatchdog.class);
+	private static final Logger logger = Logger.getLogger(WatchDog.class);
 	
 	/**
 	 * <p>
@@ -52,10 +45,14 @@ public class FileWatchdog extends Thread {
 	 * 
 	 * @param filename the file absolute path to watch
 	 */
-	public FileWatchdog(String filename, long delay) {
-		logger.info("Start watching file changes on: " + filename);
-		file = new File(filename);
+	public WatchDog(ConfigurationManager singleInstance, Collection<String> fileList, long delay) {
 		this.delay = delay;
+		this.singleInstance = singleInstance;
+		fileToBeWatched = new ArrayList<FileInfo>();
+		for (String aFilePath : fileList) {
+			fileToBeWatched.add(new FileInfo(aFilePath));
+		}
+		
 		setDaemon(true);
 		checkAndConfigure();
 	}
@@ -64,24 +61,26 @@ public class FileWatchdog extends Thread {
 	 * 
 	 */
 	private void checkAndConfigure() {
-		try {
-			file.exists();
-		} catch(SecurityException e) {
-			logger.error("File watched doesn't exist. Stop watching!!!");
-			interrupted = true;
-			return;
-		}
-		
-		long l = file.lastModified();
-		if(lastModify < l) {
-			lastModify = l;
+		for (FileInfo aFileInfo : fileToBeWatched) {
+			File file = aFileInfo.getFile();
 			try {
+				file.exists();
+			} catch(SecurityException e) {
+				logger.error("File watched doesn't exist. Stop watching!!!");
+				interrupted = true;
+				return;
+			}
+			
+			long l = file.lastModified();
+			if(aFileInfo.getLastModify() < l) {
+				aFileInfo.setLastModify(l);
 				logger.info("Found configuration changes.");
-				// passing null because instance is already configured
-				// used only for reloading configuration
-				ConfigurationManager.configureAndWatch(null, null);
-			} catch (ConfigurationException e) {
-				// no interruption expected
+				try {
+					singleInstance.doConfigure();
+					break;
+				} catch (ConfigurationException e) {
+					logger.error(e.getMessage(), e);
+				}
 			}
 		}
 	}
@@ -97,5 +96,4 @@ public class FileWatchdog extends Thread {
 			checkAndConfigure();
 		}
 	}
-	
 }

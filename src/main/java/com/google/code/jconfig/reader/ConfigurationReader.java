@@ -23,8 +23,6 @@ package com.google.code.jconfig.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import javax.xml.parsers.*;
@@ -34,8 +32,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.google.code.jconfig.ConfigurationException;
-import com.google.code.jconfig.helper.WatchdogService;
+import com.google.code.jconfig.exception.ConfigurationException;
+import com.google.code.jconfig.factory.ConfigurationReaderFactory;
+import com.google.code.jconfig.model.ConfigurationInfo;
 import com.google.code.jconfig.model.IConfiguration;
 import com.google.code.jconfig.reader.hierarchical.HierarchicalReader;
 import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
@@ -48,12 +47,13 @@ import com.google.code.jconfig.reader.plugins.IConfigurationPlugin;
  *
  * @author: Gabriele Fedeli (gabriele.fedeli@gmail.com)
  */
-public class ConfigurationReader extends DefaultHandler implements IConfigurationReader {
+public class ConfigurationReader implements IConfigurationReader {
 
 	private StringBuilder currentConfigPath;
 	private SAXParser parser;
 	private ConfigurationReaderHandler readerHandler;
-	private Map<String, IConfiguration> configurations;
+	//private Map<String, IConfiguration> configurations;
+	private ConfigurationInfo configurationInfo;
 	
 	private static final Logger logger = Logger.getLogger(ConfigurationReader.class);
 	
@@ -88,24 +88,27 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 	 * (non-Javadoc)
 	 * @see com.google.code.jconfig.reader.IConfigurationReader#readConfiguration(java.lang.String)
 	 */
-	public Map<String, IConfiguration> readConfiguration(String absolutePath) throws ConfigurationException {
+	public ConfigurationInfo readConfiguration(String absolutePath) throws ConfigurationException {
 		try {
 			logger.debug("Reading configuration: " + absolutePath);
+			configurationInfo = new ConfigurationInfo();
 			File configurationFile = new File(absolutePath);
 			currentConfigPath.append(configurationFile.getParent())
 			                 .append(File.separator);
+			
+			configurationInfo.addConfigurationFilePath(absolutePath);
 			parser.parse(configurationFile, readerHandler);
 		} catch (SAXException e) {
 			logger.error(e.getMessage(), e);
-			configurations.clear();
+			configurationInfo.clear();
 			throw new ConfigurationException(e.getMessage(), e);
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
-			configurations.clear();
+			configurationInfo.clear();
 			throw new ConfigurationException(e.getMessage(), e);
 		}
 		
-		return configurations;
+		return configurationInfo;
 	}
 	
 	/**
@@ -120,7 +123,6 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 		
 		@Override
 		public void startDocument() throws SAXException {
-			configurations = new HashMap<String, IConfiguration>();
 			configurationPluginStack = new Stack<IHierarchicalReader>();
 		}
 
@@ -134,12 +136,13 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 			} else if(tagName.equals(ELEMENT_TAGS.IMPORT.name())) {
 				logger.debug("Found <import> tag start.");
 				String importedConfiguration = attributes.getValue(ATTRIBUTES.file.name());
-				String absolutePath = currentConfigPath.append(importedConfiguration).toString();
+				StringBuilder absolutePath = new StringBuilder(currentConfigPath);
+				absolutePath.append(importedConfiguration);
 				/* add the imported resource to the list of the watched files. */
-				WatchdogService.addToWatch(absolutePath);
+				configurationInfo.addConfigurationFilePath(absolutePath.toString());
 				try {
-					ConfigurationReader innerReader = new ConfigurationReader();
-					configurations.putAll(innerReader.readConfiguration(absolutePath));
+					IConfigurationReader innerReader = ConfigurationReaderFactory.getReader();
+					configurationInfo.add(innerReader.readConfiguration(absolutePath.toString()));
 				} catch(ConfigurationException e) {
 					logger.error(e.getMessage(), e);
 					// TODO: if imported conf is broken what to do??
@@ -180,7 +183,7 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 				logger.debug("Found <configuration> tag end.");
 				IHierarchicalReader rootConfiguration = configurationPluginStack.pop();
 				IConfiguration configuration = currentPlugin.readConfiguration(rootConfiguration);
-				configurations.put(configuration.getId(), configuration);
+				configurationInfo.addConfigurationDetail(configuration);
 			} else if(tagName.equals(ELEMENT_TAGS.IMPORT.name())) {
 				// DO NOTHING
 				logger.debug("Found <import> tag end.");
@@ -191,6 +194,11 @@ public class ConfigurationReader extends DefaultHandler implements IConfiguratio
 			}
 		}
 		
+		@Override
+		public void endDocument() throws SAXException {
+			currentConfigPath.delete(0, currentConfigPath.length());
+		}
+
 		private IHierarchicalReader createHierarchicalReader(String nodeName, Attributes attributes) {
 			HierarchicalReader hierarchicalReader = new HierarchicalReader();
 			hierarchicalReader.setNodeName(nodeName);

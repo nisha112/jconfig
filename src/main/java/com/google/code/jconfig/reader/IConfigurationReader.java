@@ -21,9 +21,8 @@
 package com.google.code.jconfig.reader;
 
 
-import java.util.Map;
-
-import com.google.code.jconfig.ConfigurationException;
+import com.google.code.jconfig.exception.ConfigurationException;
+import com.google.code.jconfig.model.ConfigurationInfo;
 import com.google.code.jconfig.model.IConfiguration;
 
 /**
@@ -45,5 +44,5 @@ public interface IConfigurationReader {
 	 * @return a map of {@link IConfiguration}
 	 * @throws ConfigurationException
 	 */
-	public Map<String, IConfiguration> readConfiguration(String absolutePath) throws ConfigurationException;
+	public ConfigurationInfo readConfiguration(String absolutePath) throws ConfigurationException;
 }

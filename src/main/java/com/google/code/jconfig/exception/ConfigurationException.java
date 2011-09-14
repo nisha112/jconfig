@@ -17,7 +17,9 @@
  * limitations under the License.
  * 
  */
-package com.google.code.jconfig;
+package com.google.code.jconfig.exception;
+
+import com.google.code.jconfig.ConfigurationManager;
 
 /**
  * <p>

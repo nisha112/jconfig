@@ -20,11 +20,11 @@
 
 package com.google.code.jconfig.helper;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
+
+import com.google.code.jconfig.ConfigurationManager;
 
 /**
  * <p>
@@ -37,10 +37,8 @@ import org.apache.log4j.Logger;
 public abstract class WatchdogService {
 
 	private static final Logger logger = Logger.getLogger(WatchdogService.class);
-	
+	private static WatchDog watchDog;
 	public static final long DEFAULT_DELAY = 60000; // 60 seconds delay
-	private static Map<Integer, FileWatchdog> activeWatchdogs = new HashMap<Integer, FileWatchdog>();
-	private static long firstDelayUsed = DEFAULT_DELAY;
 	
 	/**
 	 * <p>
@@ -50,8 +48,8 @@ public abstract class WatchdogService {
 	 * 
 	 * @param file the file to be watched
 	 */
-	public static void addToWatch(String file) {
-		addToWatch(file, firstDelayUsed);
+	public static void watch(ConfigurationManager singleInstance, Collection<String> filePathList) {
+		watch(singleInstance, filePathList, DEFAULT_DELAY);
 	}
 	
 	/**
@@ -63,27 +61,9 @@ public abstract class WatchdogService {
 	 * @param file the file to be watched
 	 * @param delay teh delay in ms between two watch. 
 	 */
-	public static void addToWatch(String file, long delay) {
-		int hash = file.hashCode();
-		firstDelayUsed = ( activeWatchdogs.isEmpty()? delay : firstDelayUsed );
-		if( !activeWatchdogs.containsKey(hash) ) {
-			logger.info("Watching file: " + file);
-			FileWatchdog fileWatchdog = new FileWatchdog(file, delay);
-			fileWatchdog.start();
-			activeWatchdogs.put(hash, fileWatchdog);
-		} else {
-			logger.warn("File <" + file + "> already present in the watch list.");
-		}
-	}
-	
-	/**
-	 * <p>
-	 *    Stop watching all the current files and clear the list.
-	 * </p>
-	 */
-	public static void reset() {
-		logger.info("Resetting watched file list.");
-		shutdown();
+	public static void watch(ConfigurationManager singleInstance, Collection<String> filePathList, long delay) {
+		watchDog = new WatchDog(singleInstance, filePathList, delay);
+		watchDog.start();
 	}
 	
 	/**
@@ -92,11 +72,6 @@ public abstract class WatchdogService {
 	 * </p>
 	 */
 	public static void shutdown() {
-		logger.info("Stop watching files.");
-		Iterator<FileWatchdog> itr = activeWatchdogs.values().iterator();
-		while(itr.hasNext()) {
-			itr.next().interrupt();
-		}
-		activeWatchdogs.clear();
+		watchDog.interrupt();
 	}
 }

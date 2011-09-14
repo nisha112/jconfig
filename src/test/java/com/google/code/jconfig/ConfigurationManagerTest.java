@@ -25,14 +25,13 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.code.jconfig.ConfigurationException;
-import com.google.code.jconfig.ConfigurationManager;
+import junit.framework.TestCase;
+
+import com.google.code.jconfig.exception.ConfigurationException;
 import com.google.code.jconfig.listener.IConfigurationChangeListener;
 import com.google.code.jconfig.model.BasicConfiguration;
 import com.google.code.jconfig.model.IConfiguration;
 import com.google.code.jconfig.model.ServerBean;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -58,15 +57,18 @@ public class ConfigurationManagerTest extends TestCase {
 		Map<String, IConfigurationChangeListener> listeners = new HashMap<String, IConfigurationChangeListener>();
 		listeners.put("general", new TestConfigurationChangeListener());
 		listeners.put("cache", new TestCacheConfigurationChangeListener());
+		listeners.put("inner_props", new TestConfigurationChangeListener());
+		
 		try {
 			ConfigurationManager.configureAndWatch(listeners, systemPath, 200L);
+			for(;;);
 		} catch (ConfigurationException e) {
-			e.printStackTrace();
+			ConfigurationManager.shutdown();
 			fail(e.getMessage());
 		}
 	}
 
-	private class TestConfigurationChangeListener implements IConfigurationChangeListener {
+	private static class TestConfigurationChangeListener implements IConfigurationChangeListener {
 
 		public void loadConfiguration(IConfiguration configuration) {
 			System.out.println(configuration.getId());
@@ -75,7 +77,7 @@ public class ConfigurationManagerTest extends TestCase {
 		}
 	}
 	
-	private class TestCacheConfigurationChangeListener implements IConfigurationChangeListener {
+	private static class TestCacheConfigurationChangeListener implements IConfigurationChangeListener {
 
 		public void loadConfiguration(IConfiguration configuration) {
 			System.out.println(configuration.getId());
