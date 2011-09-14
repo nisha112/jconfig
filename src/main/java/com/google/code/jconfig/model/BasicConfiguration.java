@@ -26,15 +26,10 @@ import java.util.Map;
  * <p>
  *   Represent a simple configuration with its id and properties.
  * <p>
- * 
- * <p>
- *    It extends the {@link AbstractConfiguration} class for deep cloning the
- *    configuration.
- * </p>
  *
  * @author: Gabriele Fedeli (gabriele.fedeli@gmail.com)
  */
-public class BasicConfiguration /*extends AbstractConfiguration*/ {
+public class BasicConfiguration {
 
 	private Map<String, String> properties;
 		
@@ -43,7 +38,6 @@ public class BasicConfiguration /*extends AbstractConfiguration*/ {
 	 *    Construct a configuration instance with its id and properties.
 	 * </p>
 	 * 
-	 * @param id the configuration identifier.
 	 * @param properties the properties of this configuration.
 	 */
 	public BasicConfiguration(Map<String, String> properties) {
@@ -52,13 +46,13 @@ public class BasicConfiguration /*extends AbstractConfiguration*/ {
 	
 	/**
 	 * <p>
-	 *    the value associated to <em>key</em> or <em>null</em> if the key
+	 *    The value associated to <em>key</em> or <em>null</em> if the key
 	 *    doesn't exist or there's no property for this configuration.
 	 * </p>
 	 * 
 	 * @param key the property identifier
 	 * @return the value associated to <em>key</em> or <em>null</em> if the
-	 *          key doesn't exist or there's no property for this configuration.
+	 *         key doesn't exist or there's no property for this configuration.
 	 */
 	public String getProperty(String key) {
 		return ( (properties != null)? properties.get(key) : null );
@@ -66,12 +60,7 @@ public class BasicConfiguration /*extends AbstractConfiguration*/ {
 	
 	/**
 	 * <p>
-	 *    Return a cloned version of the properties of this configuration.
-	 * </p>
-	 * 
-	 * <p>
-	 *    Any changes made to the returned map doesn't affect the original
-	 *    properties of this configuration.
+	 *    Return the properties of this configuration.
 	 * </p>
 	 * 
 	 * @return a cloned version of the properties of this configuration.

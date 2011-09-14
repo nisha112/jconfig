@@ -28,7 +28,7 @@ import com.google.code.jconfig.ConfigurationManager;
 
 /**
  * <p>
- *    This abstract class will be used to take care of chnaged file used in the
+ *    This abstract class will be used to take care of changed file used in the
  *    configuration. 
  * </p>
  *
@@ -42,11 +42,12 @@ public abstract class WatchdogService {
 	
 	/**
 	 * <p>
-	 *    Add the <em>file</em> to the current list of watched resources with 
-	 *    the delays used for the very first resource added to the watch list.
+	 *    Watch changes to a list of file used in the configuration.
 	 * </p>
 	 * 
-	 * @param file the file to be watched
+	 * @param singleInstance the singleton instance of the {@link ConfigurationManager}
+	 * @param filePathList the collection of configuration file paths to be
+	 *                     watched for changes.
 	 */
 	public static void watch(ConfigurationManager singleInstance, Collection<String> filePathList) {
 		watch(singleInstance, filePathList, DEFAULT_DELAY);
@@ -54,12 +55,13 @@ public abstract class WatchdogService {
 	
 	/**
 	 * <p>
-	 *    Add the <em>file</em> to the current list of watched resources with 
-	 *    the expressed delays in ms.
+	 *    Watch changes to a list of file used in the configuration.
 	 * </p>
 	 * 
-	 * @param file the file to be watched
-	 * @param delay teh delay in ms between two watch. 
+	 * @param singleInstance the singleton instance of the {@link ConfigurationManager}
+	 * @param filePathList the collection of configuration file paths to be
+	 *                     watched for changes.
+	 * @param delay the delay in ms
 	 */
 	public static void watch(ConfigurationManager singleInstance, Collection<String> filePathList, long delay) {
 		watchDog = new WatchDog(singleInstance, filePathList, delay);
@@ -68,7 +70,7 @@ public abstract class WatchdogService {
 	
 	/**
 	 *  <p>
-	 *    Stop watching all the current files and clear the list.
+	 *    Stop watching configuration files.
 	 * </p>
 	 */
 	public static void shutdown() {

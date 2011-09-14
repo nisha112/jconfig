@@ -41,7 +41,7 @@ public interface IHierarchicalReader {
 	 * @param name the attribute's name
 	 * @return the value associated or NULL if not found
 	 */
-	public String getAttribute(String name);
+	public String getAttributeValue(String name);
 	
 	/**
 	 * <p>

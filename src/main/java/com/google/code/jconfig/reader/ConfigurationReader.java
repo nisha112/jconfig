@@ -51,7 +51,6 @@ public class ConfigurationReader implements IConfigurationReader {
 	private StringBuilder currentConfigPath;
 	private SAXParser parser;
 	private ConfigurationReaderHandler readerHandler;
-	//private Map<String, IConfiguration> configurations;
 	private ConfigurationInfo configurationInfo;
 	
 	private static final Logger logger = Logger.getLogger(ConfigurationReader.class);
@@ -181,7 +180,7 @@ public class ConfigurationReader implements IConfigurationReader {
 			} else if(tagName.equals(ELEMENT_TAGS.CONFIGURATION.name())) {
 				logger.debug("Found <configuration> tag end.");
 				IHierarchicalReader rootConfiguration = configurationPluginStack.pop();
-				String idConfiguration = rootConfiguration.getAttribute("id");
+				String idConfiguration = rootConfiguration.getAttributeValue("id");
 				Object configuration = currentPlugin.readConfiguration(rootConfiguration);
 				configurationInfo.addConfigurationDetail(idConfiguration, configuration);
 			} else if(tagName.equals(ELEMENT_TAGS.IMPORT.name())) {

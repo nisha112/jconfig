@@ -40,20 +40,23 @@ public class CacheConfigurationPlugin implements IConfigurationPlugin<List<Serve
 		 * Il reader inizia dall'elemento <configuration> a scendere e contiene
 		 * solamente il frammento di xml necessario per questa configurazione .
 		 * 
-		 * 	<configuration id="cache" plugin="com.google.code.jconfig.reader.plugins.CacheConfigurationPlugin">
-		 *		<servers>
-		 *			<server name="server 1" port="1000"/>
-		 *			<server name="server 2" port="1010"/>
-		 *			<server name="server 3" port="1020"/>
-		 *		</servers>
-		 *	</configuration>
-		 * 
+		 * <pre>
+		 *    {@code
+		 * 	     <configuration id="cache" plugin="com.google.code.jconfig.reader.plugins.CacheConfigurationPlugin">
+		 *		   <servers>
+		 *			   <server name="server 1" port="1000"/>
+		 *			   <server name="server 2" port="1010"/>
+		 *			   <server name="server 3" port="1020"/>
+		 *		   </servers>
+		 *	     </configuration>
+		 *    }
+		 * </pre>
 		 */
 		
 		IHierarchicalReader serversNode = reader.getChildren().get(0);
 		List<ServerBean> servers = new ArrayList<ServerBean>();
 		for (IHierarchicalReader child : serversNode.getChildren()) {
-			servers.add(new ServerBean(child.getAttribute("name"), Integer.parseInt(child.getAttribute("port"))));
+			servers.add(new ServerBean(child.getAttributeValue("name"), Integer.parseInt(child.getAttributeValue("port"))));
 		}
 		
 		return servers;

@@ -35,12 +35,12 @@ public interface IConfigurationPlugin<T> {
 	/**
 	 * <p>
 	 *    Handle a particular user defined configuration fragment and returns
-	 *    an instance of {@link IConfiguration}.
+	 *    a user defined configuration object.
 	 * </p>
 	 * 
 	 * @param reader a hierarchical reader for the current configuration handled
 	 *               by this plugin.
-	 * @return a {@link IConfiguration} instance.
+	 * @return a user defined configuration object
 	 */
 	public T readConfiguration(IHierarchicalReader reader);
 }

@@ -19,11 +19,10 @@
  */
 package com.google.code.jconfig.listener;
 
-import com.google.code.jconfig.ConfigurationManager;
-
 /**
  * <p>
- *   Implemented by classes interested in loading a custom {@link IConfiguration}
+ *   The listener implementing this interface will be noticed about
+ *   configuration changes.
  * <p>
  *
  * @author: Gabriele Fedeli (gabriele.fedeli@gmail.com)
@@ -32,7 +31,7 @@ public interface IConfigurationChangeListener {
 
 	/**
 	 * <p>
-	 *    Load a configuration passed by a {@link ConfigurationManager}
+	 *    Load a custom configuration object based on user specific.
 	 * </p>
 	 * 
 	 * @param configuration the configuration to be loaded.

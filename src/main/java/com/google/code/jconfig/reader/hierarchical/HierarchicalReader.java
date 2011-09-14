@@ -42,9 +42,9 @@ public class HierarchicalReader implements IHierarchicalReader {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.google.code.jconfig.reader.hierarchical.IHierarchicalReader#getAttribute(java.lang.String)
+	 * @see com.google.code.jconfig.reader.hierarchical.IHierarchicalReader#getAttributeValue(java.lang.String)
 	 */
-	public String getAttribute(String name) {
+	public String getAttributeValue(String name) {
 		return attributes.get(name);
 	}
 

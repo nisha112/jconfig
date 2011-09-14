@@ -61,7 +61,7 @@ public class PropertyConfigurationPlugin implements IConfigurationPlugin<BasicCo
 		if(reader.hasChildren()) {
 			Map<String, String> properties = new HashMap<String, String>();
 			for (IHierarchicalReader child : reader.getChildren()) {
-				properties.put(child.getAttribute("key"), child.getAttribute("value"));
+				properties.put(child.getAttributeValue("key"), child.getAttributeValue("value"));
 			}
 			configuration = new BasicConfiguration(properties);
 		}
