@@ -31,6 +31,7 @@ import com.google.code.jconfig.helper.WatchdogService;
 import com.google.code.jconfig.listener.IConfigurationChangeListener;
 import com.google.code.jconfig.model.ConfigurationInfo;
 import com.google.code.jconfig.reader.IConfigurationReader;
+import com.rits.cloning.Cloner;
 
 /**
  * <p>
@@ -45,8 +46,9 @@ public class ConfigurationManager {
 	private ConfigurationInfo currentConfigurationInfo;
 	private Map<String, IConfigurationChangeListener> activeListeners;
 	
-	private static long delay;
+	private long delay;
 	private static ConfigurationManager instance;
+	private static Cloner cloner = new Cloner();
 	private static final Logger logger = Logger.getLogger(ConfigurationManager.class);
 	
 	private ConfigurationManager() throws ConfigurationException { }
@@ -105,10 +107,10 @@ public class ConfigurationManager {
 	 * @param delay the time in millis for checking configuration changes
 	 * @throws ConfigurationException
 	 */
-	public static synchronized void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath, long userDelay) throws ConfigurationException {
+	public static synchronized void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath, long delay) throws ConfigurationException {
 		if(instance == null) {
-			delay = userDelay;
 			instance = new ConfigurationManager(listeners, filepath);
+			instance.delay = delay;
 			instance.doConfigure();
 		}
 	}
@@ -138,7 +140,8 @@ public class ConfigurationManager {
 			logger.debug("Notifying listener <" + entry.getValue().getClass().getName() + "> for configuratio id <" + entry.getKey() + ">");
 			Map<String, Object> activeConfigurations = currentConfigurationInfo.getConfigurationMap();
 			try {
-				entry.getValue().loadConfiguration(activeConfigurations.get(entry.getKey()));
+				Object configuration = activeConfigurations.get(entry.getKey());
+				entry.getValue().loadConfiguration(cloner.deepClone(configuration));
 			} catch (Throwable e) {
 				// for not terminating the watchdog thread on configuration changes.
 				logger.error("Received an uncaught exception", e);
