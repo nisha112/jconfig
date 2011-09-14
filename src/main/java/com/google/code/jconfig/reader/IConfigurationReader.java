@@ -35,12 +35,12 @@ public interface IConfigurationReader {
 
 	/**
 	 * <p>
-	 *   Parse a configuration file and returns a map of
-	 *   {@link IConfiguration}.
+	 *   Parse a configuration file and returns an instance of
+	 *   {@link ConfigurationInfo}, containing all the configuration infos parsed.
 	 * </p>
 	 * 
 	 * @param absolutePath the configuration file
-	 * @return a map of {@link IConfiguration}
+	 * @return an instance of {@link ConfigurationInfo}
 	 * @throws ConfigurationException
 	 */
 	public ConfigurationInfo readConfiguration(String absolutePath) throws ConfigurationException;

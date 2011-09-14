@@ -35,7 +35,7 @@ public class BasicConfiguration {
 		
 	/**
 	 * <p>
-	 *    Construct a configuration instance with its id and properties.
+	 *    Construct a configuration instance with its properties.
 	 * </p>
 	 * 
 	 * @param properties the properties of this configuration.

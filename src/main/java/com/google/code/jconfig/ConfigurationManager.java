@@ -66,10 +66,11 @@ public class ConfigurationManager {
 	/**
 	 * <p>
 	 *    Configure the configuration manager to load a configuration file.
+	 *    Register a map of listener, that will be invoked on configuration
+	 *    load.
 	 * </p>
 	 * 
-	 * @param listeners a map with the all the registered listener for a
-	 *                  particular configuration
+	 * @param listeners a map with the registered listener
 	 * @param filepath the real path of the configuration file
 	 * @throws ConfigurationException
 	 */
@@ -83,11 +84,10 @@ public class ConfigurationManager {
 	/**
 	 * <p>
 	 *    Configure the configuration manager to load a configuration file and 
-	 *    to notify changes to it.
+	 *    to notify changes to to the appropriate listener.
 	 * </p>
 	 * 
-	 * @param listeners a map with the all the registered listener for a
-	 *                  particular configuration
+	 * @param listeners a map with the registered listener
 	 * @param filepath the real path of the configuration file
 	 * @throws ConfigurationException
 	 */
@@ -98,11 +98,10 @@ public class ConfigurationManager {
 	/**
 	 * <p>
 	 *    Configure the configuration manager to load a configuration file and 
-	 *    to notify changes to it.
+	 *    to notify changes to to the appropriate listener.
 	 * </p>
 	 * 
-	 * @param listeners a map with the all the registered listener for a
-	 *                  particular configuration
+	 * @param listeners a map with the registered listener
 	 * @param filepath the real path of the configuration file
 	 * @param delay the time in millis for checking configuration changes
 	 * @throws ConfigurationException
@@ -125,6 +124,13 @@ public class ConfigurationManager {
 		WatchdogService.shutdown();
 	}
 	
+	/**
+	 * <p>
+	 *    Execute the configuration work.
+	 * </p>
+	 * 
+	 * @throws ConfigurationException
+	 */
 	public void doConfigure() throws ConfigurationException {
 		IConfigurationReader configurationReader = ConfigurationReaderFactory.getReader();
 		currentConfigurationInfo = configurationReader.readConfiguration(filepath);

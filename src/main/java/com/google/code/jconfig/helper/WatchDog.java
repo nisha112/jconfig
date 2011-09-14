@@ -29,6 +29,13 @@ import org.apache.log4j.Logger;
 import com.google.code.jconfig.ConfigurationManager;
 import com.google.code.jconfig.exception.ConfigurationException;
 
+/**
+ * <p>
+ *    Watch a collection of file in search of changes. 
+ * </p>
+ *
+ * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
+ */
 public class WatchDog  extends Thread {
 
 	private long delay = 0L;
@@ -40,10 +47,12 @@ public class WatchDog  extends Thread {
 	
 	/**
 	 * <p>
-	 *    Constructor with the file absolute path to watch.
+	 *    Constructor
 	 * </p>
 	 * 
-	 * @param filename the file absolute path to watch
+	 * @param singleInstance the singleton instance of {@link ConfigurationManager}
+	 * @param fileList a list of the file to be watched
+	 * @param delay the delay in ms
 	 */
 	public WatchDog(ConfigurationManager singleInstance, Collection<String> fileList, long delay) {
 		this.delay = delay;

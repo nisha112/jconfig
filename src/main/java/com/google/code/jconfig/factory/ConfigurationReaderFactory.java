@@ -24,8 +24,23 @@ import com.google.code.jconfig.exception.ConfigurationException;
 import com.google.code.jconfig.reader.ConfigurationReader;
 import com.google.code.jconfig.reader.IConfigurationReader;
 
+/**
+ * <p>
+ *    Factory for building a configuration reader
+ * </p>
+ *
+ * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
+ */
 public abstract class ConfigurationReaderFactory {
 
+	/**
+	 * <p>
+	 *    Return an instance of {@link ConfigurationReader} class.
+	 * </p>
+	 * 
+	 * @return an instance of {@link ConfigurationReader} class
+	 * @throws ConfigurationException
+	 */
 	public static IConfigurationReader getReader() throws ConfigurationException {
 		return new ConfigurationReader();
 	}

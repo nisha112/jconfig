@@ -22,24 +22,59 @@ package com.google.code.jconfig.helper;
 
 import java.io.File;
 
+/**
+ * <p>
+ *    Rapresent some information about a file to be watched. 
+ * </p>
+ *
+ * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
+ */
 public class FileInfo {
 
 	private File file;
 	private long lastModify = 0;
 	
+	/**
+	 * <p>
+	 *   Constructor
+	 * </p>
+	 * 
+	 * @param filePath the path of the file that will be watched.
+	 */
 	public FileInfo(String filePath) {
 		file = new File(filePath);
 		lastModify = file.lastModified();
 	}
 
+	/**
+	 * <p>
+	 *    Return the file
+	 * </p>
+	 * 
+	 * @return the file
+	 */
 	public File getFile() {
 		return file;
 	}
 
+	/**
+	 * <p>
+	 *    Return the last modify date in ms of the file
+	 * </p>
+	 * 
+	 * @return the last modify date in ms of the file
+	 */
 	public long getLastModify() {
 		return lastModify;
 	}
 
+	/**
+	 * <p>
+	 *    Set the new modify date in ms
+	 * </p>
+	 * 
+	 * @param lastModify the new modify date in ms
+	 */
 	public void setLastModify(long lastModify) {
 		this.lastModify = lastModify;
 	}
