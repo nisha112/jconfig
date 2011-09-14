@@ -22,6 +22,8 @@ package com.google.code.jconfig;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
@@ -50,6 +52,7 @@ public class ConfigurationManager {
 	private static ConfigurationManager instance;
 	private static Cloner cloner = new Cloner();
 	private static final Logger logger = Logger.getLogger(ConfigurationManager.class);
+	private static final Executor poolExecutor = Executors.newSingleThreadExecutor();
 	
 	private ConfigurationManager() throws ConfigurationException { }
 	
@@ -126,16 +129,26 @@ public class ConfigurationManager {
 	
 	/**
 	 * <p>
-	 *    Execute the configuration work.
+	 *    Execute the configuration work one at a time.
 	 * </p>
 	 * 
 	 * @throws ConfigurationException
 	 */
 	public void doConfigure() throws ConfigurationException {
-		IConfigurationReader configurationReader = ConfigurationReaderFactory.getReader();
-		currentConfigurationInfo = configurationReader.readConfiguration(filepath);
-		WatchdogService.watch(instance, currentConfigurationInfo.getConfFileList(), delay);
-		notifyListeners();
+		Runnable runnable = new Runnable() {
+			public void run() {
+				try {
+					IConfigurationReader configurationReader = ConfigurationReaderFactory.getReader();
+					currentConfigurationInfo = configurationReader.readConfiguration(filepath);
+					WatchdogService.watch(instance, currentConfigurationInfo.getConfFileList(), delay);
+					notifyListeners();
+				} catch (ConfigurationException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		};
+		
+		poolExecutor.execute(runnable);
 	}
 	
 	private void notifyListeners() {
@@ -143,11 +156,13 @@ public class ConfigurationManager {
 		Iterator<Entry<String, IConfigurationChangeListener>> itr = activeListeners.entrySet().iterator();
 		while(itr.hasNext()) {
 			Entry<String, IConfigurationChangeListener> entry = itr.next();
-			logger.debug("Notifying listener <" + entry.getValue().getClass().getName() + "> for configuratio id <" + entry.getKey() + ">");
 			Map<String, Object> activeConfigurations = currentConfigurationInfo.getConfigurationMap();
 			try {
 				Object configuration = activeConfigurations.get(entry.getKey());
-				entry.getValue().loadConfiguration(cloner.deepClone(configuration));
+				if(configuration != null) {
+					logger.debug("Notifying listener <" + entry.getValue().getClass().getName() + "> for configuratio id <" + entry.getKey() + ">");
+					entry.getValue().loadConfiguration(cloner.deepClone(configuration));
+				}
 			} catch (Throwable e) {
 				// for not terminating the watchdog thread on configuration changes.
 				logger.error("Received an uncaught exception", e);

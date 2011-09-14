@@ -34,6 +34,11 @@ public interface IConfigurationChangeListener {
 	 *    Load a custom configuration object based on user specific.
 	 * </p>
 	 * 
+	 * <p>
+	 *   Concurrent call to this method may be occurs.
+	 *   Thread safety must be granted by developers if necessary.
+	 * </p>
+	 * 
 	 * @param configuration the configuration to be loaded.
 	 */
 	public <T> void loadConfiguration(T configuration);

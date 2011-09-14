@@ -21,6 +21,8 @@
 package com.google.code.jconfig.helper;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
@@ -39,6 +41,7 @@ public abstract class WatchdogService {
 	private static final Logger logger = Logger.getLogger(WatchdogService.class);
 	private static WatchDog watchDog;
 	public static final long DEFAULT_DELAY = 60000; // 60 seconds delay
+	private static ExecutorService executorService = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
 	
 	/**
 	 * <p>
@@ -64,8 +67,12 @@ public abstract class WatchdogService {
 	 * @param delay the delay in ms
 	 */
 	public static void watch(ConfigurationManager singleInstance, Collection<String> filePathList, long delay) {
-		watchDog = new WatchDog(singleInstance, filePathList, delay);
-		watchDog.start();
+		if(watchDog == null) {
+			watchDog = new WatchDog(singleInstance, filePathList, delay);
+			executorService.execute(watchDog);
+		} else {
+			watchDog.reloadFileList(filePathList);
+		}
 	}
 	
 	/**
@@ -75,6 +82,6 @@ public abstract class WatchdogService {
 	 */
 	public static void shutdown() {
 		logger.info("Shutting down watchdog resources.");
-		watchDog.interrupt();
+		executorService.shutdown();
 	}
 }

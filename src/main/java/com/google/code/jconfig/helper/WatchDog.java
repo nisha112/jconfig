@@ -36,7 +36,7 @@ import com.google.code.jconfig.exception.ConfigurationException;
  *
  * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
  */
-public class WatchDog  extends Thread {
+public class WatchDog implements Runnable {
 
 	private long delay = 0L;
 	private ConfigurationManager singleInstance;
@@ -62,8 +62,15 @@ public class WatchDog  extends Thread {
 			fileToBeWatched.add(new FileInfo(aFilePath));
 		}
 		
-		setDaemon(true);
 		checkAndConfigure();
+	}
+	
+	public void reloadFileList(Collection<String> fileList) {
+		fileToBeWatched.clear();
+		for (String aFilePath : fileList) {
+			fileToBeWatched.add(new FileInfo(aFilePath));
+		}
+		interrupted = false;
 	}
 
 	/**
@@ -79,12 +86,13 @@ public class WatchDog  extends Thread {
 				interrupted = true;
 				return;
 			}
-			
+
 			long l = file.lastModified();
 			if(aFileInfo.getLastModify() < l) {
 				aFileInfo.setLastModify(l);
 				logger.info("Found configuration changes.");
 				try {
+					interrupted = true;
 					singleInstance.doConfigure();
 					break;
 				} catch (ConfigurationException e) {
@@ -94,7 +102,6 @@ public class WatchDog  extends Thread {
 		}
 	}
 	
-	@Override
 	public void run() {
 		while(!interrupted) {
 			try {
