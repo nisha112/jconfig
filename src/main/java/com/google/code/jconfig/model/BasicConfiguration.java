@@ -34,7 +34,7 @@ import java.util.Map;
  *
  * @author: Gabriele Fedeli (gabriele.fedeli@gmail.com)
  */
-public class BasicConfiguration extends AbstractConfiguration {
+public class BasicConfiguration /*extends AbstractConfiguration*/ {
 
 	private Map<String, String> properties;
 		
@@ -46,8 +46,7 @@ public class BasicConfiguration extends AbstractConfiguration {
 	 * @param id the configuration identifier.
 	 * @param properties the properties of this configuration.
 	 */
-	public BasicConfiguration(String id, Map<String, String> properties) {
-		this.id = id;
+	public BasicConfiguration(Map<String, String> properties) {
 		this.properties = properties;
 	}
 	
@@ -78,6 +77,6 @@ public class BasicConfiguration extends AbstractConfiguration {
 	 * @return a cloned version of the properties of this configuration.
 	 */
 	public Map<String, String> getProperties() {
-		return deepClone(properties);
+		return properties;
 	}
 }

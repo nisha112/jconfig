@@ -35,7 +35,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.google.code.jconfig.exception.ConfigurationException;
 import com.google.code.jconfig.factory.ConfigurationReaderFactory;
 import com.google.code.jconfig.model.ConfigurationInfo;
-import com.google.code.jconfig.model.IConfiguration;
 import com.google.code.jconfig.reader.hierarchical.HierarchicalReader;
 import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 import com.google.code.jconfig.reader.plugins.IConfigurationPlugin;
@@ -118,7 +117,7 @@ public class ConfigurationReader implements IConfigurationReader {
 	 */
 	private class ConfigurationReaderHandler extends DefaultHandler {
 		
-		private IConfigurationPlugin currentPlugin;
+		private IConfigurationPlugin<?> currentPlugin;
 		private Stack<IHierarchicalReader> configurationPluginStack;
 		
 		@Override
@@ -182,8 +181,9 @@ public class ConfigurationReader implements IConfigurationReader {
 			} else if(tagName.equals(ELEMENT_TAGS.CONFIGURATION.name())) {
 				logger.debug("Found <configuration> tag end.");
 				IHierarchicalReader rootConfiguration = configurationPluginStack.pop();
-				IConfiguration configuration = currentPlugin.readConfiguration(rootConfiguration);
-				configurationInfo.addConfigurationDetail(configuration);
+				String idConfiguration = rootConfiguration.getAttribute("id");
+				Object configuration = currentPlugin.readConfiguration(rootConfiguration);
+				configurationInfo.addConfigurationDetail(idConfiguration, configuration);
 			} else if(tagName.equals(ELEMENT_TAGS.IMPORT.name())) {
 				// DO NOTHING
 				logger.debug("Found <import> tag end.");
@@ -209,9 +209,9 @@ public class ConfigurationReader implements IConfigurationReader {
 			return hierarchicalReader;
 		}
 		
-		private IConfigurationPlugin newPlugin(String className) throws ConfigurationException {
+		private IConfigurationPlugin<?> newPlugin(String className) throws ConfigurationException {
 			try {
-				return (IConfigurationPlugin)Class.forName(className).newInstance();
+				return (IConfigurationPlugin<?>)Class.forName(className).newInstance();
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 				throw new ConfigurationException(e.getMessage(), e);

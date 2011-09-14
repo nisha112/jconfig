@@ -23,6 +23,7 @@ package com.google.code.jconfig;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -30,7 +31,6 @@ import junit.framework.TestCase;
 import com.google.code.jconfig.exception.ConfigurationException;
 import com.google.code.jconfig.listener.IConfigurationChangeListener;
 import com.google.code.jconfig.model.BasicConfiguration;
-import com.google.code.jconfig.model.IConfiguration;
 import com.google.code.jconfig.model.ServerBean;
 
 /**
@@ -70,19 +70,19 @@ public class ConfigurationManagerTest extends TestCase {
 
 	private static class TestConfigurationChangeListener implements IConfigurationChangeListener {
 
-		public void loadConfiguration(IConfiguration configuration) {
-			System.out.println(configuration.getId());
-			System.out.println(((BasicConfiguration)configuration).getProperties());
+		public <T> void loadConfiguration(T configuration) {
+			BasicConfiguration conf = (BasicConfiguration)configuration;
+			System.out.println(conf.getProperties());
 			System.out.println("-----------------------------------------");
 		}
 	}
 	
 	private static class TestCacheConfigurationChangeListener implements IConfigurationChangeListener {
 
-		public void loadConfiguration(IConfiguration configuration) {
-			System.out.println(configuration.getId());
-			CacheConfiguration conf = (CacheConfiguration)configuration;
-			for (ServerBean server : conf.getServers()) {
+		public <T> void loadConfiguration(T configuration) {
+			@SuppressWarnings("unchecked")
+			List<ServerBean> conf = (List<ServerBean>)configuration;
+			for (ServerBean server : conf) {
 				System.out.println(server);
 			}
 			

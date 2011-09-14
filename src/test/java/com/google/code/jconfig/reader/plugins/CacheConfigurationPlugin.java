@@ -23,20 +23,18 @@ package com.google.code.jconfig.reader.plugins;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.code.jconfig.CacheConfiguration;
-import com.google.code.jconfig.model.IConfiguration;
 import com.google.code.jconfig.model.ServerBean;
 import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 import com.google.code.jconfig.reader.plugins.IConfigurationPlugin;
 
 
-public class CacheConfigurationPlugin implements IConfigurationPlugin {
+public class CacheConfigurationPlugin implements IConfigurationPlugin<List<ServerBean>> {
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.google.code.jconfig.reader.plugins.IConfigurationPlugin#readConfiguration(com.google.code.jconfig.reader.hierarchical.IHierarchicalReader)
 	 */
-	public IConfiguration readConfiguration(IHierarchicalReader reader) {
+	public List<ServerBean> readConfiguration(IHierarchicalReader reader) {
 		
 		/**
 		 * Il reader inizia dall'elemento <configuration> a scendere e contiene
@@ -58,7 +56,7 @@ public class CacheConfigurationPlugin implements IConfigurationPlugin {
 			servers.add(new ServerBean(child.getAttribute("name"), Integer.parseInt(child.getAttribute("port"))));
 		}
 		
-		return new CacheConfiguration(reader.getAttribute("id"), servers);
+		return servers;
 	}
 
 }

@@ -20,7 +20,6 @@
 
 package com.google.code.jconfig.reader.plugins;
 
-import com.google.code.jconfig.model.IConfiguration;
 import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 
 /**
@@ -31,7 +30,7 @@ import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
  *
  * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
  */
-public interface IConfigurationPlugin {
+public interface IConfigurationPlugin<T> {
 
 	/**
 	 * <p>
@@ -43,5 +42,5 @@ public interface IConfigurationPlugin {
 	 *               by this plugin.
 	 * @return a {@link IConfiguration} instance.
 	 */
-	public IConfiguration readConfiguration(IHierarchicalReader reader);
+	public T readConfiguration(IHierarchicalReader reader);
 }

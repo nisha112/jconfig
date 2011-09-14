@@ -23,7 +23,6 @@ package com.google.code.jconfig.reader;
 
 import com.google.code.jconfig.exception.ConfigurationException;
 import com.google.code.jconfig.model.ConfigurationInfo;
-import com.google.code.jconfig.model.IConfiguration;
 
 /**
  * <p>

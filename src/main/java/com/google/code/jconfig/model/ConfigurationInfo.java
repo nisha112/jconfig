@@ -27,22 +27,22 @@ import java.util.Map;
 
 public class ConfigurationInfo {
 
-	private Map<String, IConfiguration> configurationMap;
+	private Map<String, Object> configurationMap;
 	private List<String> confFileList;
 	
-	public Map<String, IConfiguration> getConfigurationMap() {
+	public Map<String, Object> getConfigurationMap() {
 		if(configurationMap == null) {
-			configurationMap = new HashMap<String, IConfiguration>();
+			configurationMap = new HashMap<String, Object>();
 		}
 		return configurationMap;
 	}
 
-	public void setConfigurationMap(Map<String, IConfiguration> configurationMap) {
+	public void setConfigurationMap(Map<String, Object> configurationMap) {
 		this.configurationMap = configurationMap;
 	}
 	
-	public void addConfigurationDetail(IConfiguration configuration) {
-		getConfigurationMap().put(configuration.getId(), configuration);
+	public void addConfigurationDetail(String id, Object configuration) {
+		getConfigurationMap().put(id, configuration);
 	}
 
 	public List<String> getConfFileList() {

@@ -72,6 +72,7 @@ public abstract class WatchdogService {
 	 * </p>
 	 */
 	public static void shutdown() {
+		logger.info("Shutting down watchdog resources.");
 		watchDog.interrupt();
 	}
 }

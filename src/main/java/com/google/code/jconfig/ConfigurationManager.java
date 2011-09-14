@@ -30,7 +30,6 @@ import com.google.code.jconfig.factory.ConfigurationReaderFactory;
 import com.google.code.jconfig.helper.WatchdogService;
 import com.google.code.jconfig.listener.IConfigurationChangeListener;
 import com.google.code.jconfig.model.ConfigurationInfo;
-import com.google.code.jconfig.model.IConfiguration;
 import com.google.code.jconfig.reader.IConfigurationReader;
 
 /**
@@ -137,7 +136,7 @@ public class ConfigurationManager {
 		while(itr.hasNext()) {
 			Entry<String, IConfigurationChangeListener> entry = itr.next();
 			logger.debug("Notifying listener <" + entry.getValue().getClass().getName() + "> for configuratio id <" + entry.getKey() + ">");
-			Map<String, IConfiguration> activeConfigurations = currentConfigurationInfo.getConfigurationMap();
+			Map<String, Object> activeConfigurations = currentConfigurationInfo.getConfigurationMap();
 			try {
 				entry.getValue().loadConfiguration(activeConfigurations.get(entry.getKey()));
 			} catch (Throwable e) {

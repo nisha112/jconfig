@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.code.jconfig.model.BasicConfiguration;
-import com.google.code.jconfig.model.IConfiguration;
 import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 
 
@@ -51,20 +50,20 @@ import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
  *
  * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
  */
-public class PropertyConfigurationPlugin implements IConfigurationPlugin {
+public class PropertyConfigurationPlugin implements IConfigurationPlugin<BasicConfiguration> {
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.google.code.jconfig.reader.plugins.IConfigurationPlugin#readConfiguration(com.google.code.jconfig.reader.hierarchical.IHierarchicalReader)
 	 */
-	public IConfiguration readConfiguration(IHierarchicalReader reader) {
+	public BasicConfiguration readConfiguration(IHierarchicalReader reader) {
 		BasicConfiguration configuration = null;
 		if(reader.hasChildren()) {
 			Map<String, String> properties = new HashMap<String, String>();
 			for (IHierarchicalReader child : reader.getChildren()) {
 				properties.put(child.getAttribute("key"), child.getAttribute("value"));
 			}
-			configuration = new BasicConfiguration(reader.getAttribute("id"), properties);
+			configuration = new BasicConfiguration(properties);
 		}
 		
 		return configuration;

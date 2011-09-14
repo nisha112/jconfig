@@ -20,7 +20,6 @@
 package com.google.code.jconfig.listener;
 
 import com.google.code.jconfig.ConfigurationManager;
-import com.google.code.jconfig.model.IConfiguration;
 
 /**
  * <p>
@@ -38,5 +37,5 @@ public interface IConfigurationChangeListener {
 	 * 
 	 * @param configuration the configuration to be loaded.
 	 */
-	public void loadConfiguration(IConfiguration configuration);
+	public <T> void loadConfiguration(T configuration);
 }
