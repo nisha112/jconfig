@@ -27,7 +27,6 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 
 import com.google.code.jconfig.ConfigurationManager;
-import com.google.code.jconfig.exception.ConfigurationException;
 
 /**
  * <p>
@@ -42,6 +41,7 @@ public class WatchDog implements Runnable {
 	private ConfigurationManager singleInstance;
 	private Collection<FileInfo> fileToBeWatched;
 	private boolean interrupted = false;
+	private boolean suspendConfigurationCheck = false;
 	
 	private static final Logger logger = Logger.getLogger(WatchDog.class);
 	
@@ -70,7 +70,7 @@ public class WatchDog implements Runnable {
 		for (String aFilePath : fileList) {
 			fileToBeWatched.add(new FileInfo(aFilePath));
 		}
-		interrupted = false;
+		suspendConfigurationCheck = false;
 	}
 
 	/**
@@ -91,13 +91,9 @@ public class WatchDog implements Runnable {
 			if(aFileInfo.getLastModify() < l) {
 				aFileInfo.setLastModify(l);
 				logger.info("Found configuration changes.");
-				try {
-					interrupted = true;
-					singleInstance.doConfigure();
-					break;
-				} catch (ConfigurationException e) {
-					logger.error(e.getMessage(), e);
-				}
+				suspendConfigurationCheck = true;
+				singleInstance.doConfigure();
+				break;
 			}
 		}
 	}
@@ -108,8 +104,12 @@ public class WatchDog implements Runnable {
 				Thread.sleep(delay);
 			} catch (InterruptedException e) {
 				// no interruption expected
+				System.out.println(e.getMessage());
 			}
-			checkAndConfigure();
+			
+			if( !suspendConfigurationCheck ) {
+				checkAndConfigure();
+			}
 		}
 	}
 }

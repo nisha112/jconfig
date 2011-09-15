@@ -1,4 +1,4 @@
-package com.google.code.jconfig.helper;
+package com.google.code.jconfig.factory;
 
 import java.util.concurrent.ThreadFactory;
 

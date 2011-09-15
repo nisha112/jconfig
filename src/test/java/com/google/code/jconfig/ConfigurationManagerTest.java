@@ -28,7 +28,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import com.google.code.jconfig.exception.ConfigurationException;
 import com.google.code.jconfig.listener.IConfigurationChangeListener;
 import com.google.code.jconfig.model.BasicConfiguration;
 import com.google.code.jconfig.model.ServerBean;
@@ -59,13 +58,8 @@ public class ConfigurationManagerTest extends TestCase {
 		listeners.put("cache", new TestCacheConfigurationChangeListener());
 		listeners.put("inner_props", new TestConfigurationChangeListener());
 		
-		try {
-			ConfigurationManager.configureAndWatch(listeners, systemPath, 200L);
-			for(;;);
-		} catch (ConfigurationException e) {
-			ConfigurationManager.shutdown();
-			fail(e.getMessage());
-		}
+		ConfigurationManager.configureAndWatch(listeners, systemPath, 200L);
+		for(;;);
 	}
 
 	private static class TestConfigurationChangeListener implements IConfigurationChangeListener {

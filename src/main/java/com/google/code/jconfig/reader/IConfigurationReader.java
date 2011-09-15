@@ -21,7 +21,7 @@
 package com.google.code.jconfig.reader;
 
 
-import com.google.code.jconfig.exception.ConfigurationException;
+import com.google.code.jconfig.exception.ConfigurationParsingException;
 import com.google.code.jconfig.model.ConfigurationInfo;
 
 /**
@@ -41,7 +41,7 @@ public interface IConfigurationReader {
 	 * 
 	 * @param absolutePath the configuration file
 	 * @return an instance of {@link ConfigurationInfo}
-	 * @throws ConfigurationException
+	 * @throws ConfigurationParsingException
 	 */
-	public ConfigurationInfo readConfiguration(String absolutePath) throws ConfigurationException;
+	public ConfigurationInfo readConfiguration(String absolutePath) throws ConfigurationParsingException;
 }

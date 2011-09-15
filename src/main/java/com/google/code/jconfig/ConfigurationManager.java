@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
-import com.google.code.jconfig.exception.ConfigurationException;
+import com.google.code.jconfig.exception.ConfigurationParsingException;
 import com.google.code.jconfig.factory.ConfigurationReaderFactory;
 import com.google.code.jconfig.helper.WatchdogService;
 import com.google.code.jconfig.listener.IConfigurationChangeListener;
@@ -38,6 +38,14 @@ import com.rits.cloning.Cloner;
 /**
  * <p>
  *    Allows to manage application configurations from an external file.
+ * </p>
+ * 
+ * <p>
+ *    Upon configuration exception will be maintained the last working
+ *    configuration, the error message will be logged, will be sent no
+ *    notification to the registered listeners. <br/>
+ *    To recover this situation simply change the configuration files in order
+ *    to solve the logged errors.
  * </p>
  *
  * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
@@ -54,9 +62,9 @@ public class ConfigurationManager {
 	private static final Logger logger = Logger.getLogger(ConfigurationManager.class);
 	private static final Executor poolExecutor = Executors.newSingleThreadExecutor();
 	
-	private ConfigurationManager() throws ConfigurationException { }
+	private ConfigurationManager() { }
 	
-	private ConfigurationManager(Map<String, IConfigurationChangeListener> listeners, String filepath) throws ConfigurationException {
+	private ConfigurationManager(Map<String, IConfigurationChangeListener> listeners, String filepath) {
 		logger.info("******* ConfigurationManager initialization *******");
 		logger.info(" -> configuration: " + filepath);
 		logger.info(" -> registered listeners: " + listeners);
@@ -75,9 +83,8 @@ public class ConfigurationManager {
 	 * 
 	 * @param listeners a map with the registered listener
 	 * @param filepath the real path of the configuration file
-	 * @throws ConfigurationException
 	 */
-	public static synchronized void configure(Map<String, IConfigurationChangeListener> listeners, String filepath) throws ConfigurationException {
+	public static synchronized void configure(Map<String, IConfigurationChangeListener> listeners, String filepath) {
 		if(instance == null) {
 			instance = new ConfigurationManager(listeners, filepath);
 			instance.doConfigure();
@@ -92,9 +99,8 @@ public class ConfigurationManager {
 	 * 
 	 * @param listeners a map with the registered listener
 	 * @param filepath the real path of the configuration file
-	 * @throws ConfigurationException
 	 */
-	public static void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath) throws ConfigurationException {
+	public static void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath) {
 		configureAndWatch(listeners, filepath, WatchdogService.DEFAULT_DELAY);
 	}
 	
@@ -107,9 +113,8 @@ public class ConfigurationManager {
 	 * @param listeners a map with the registered listener
 	 * @param filepath the real path of the configuration file
 	 * @param delay the time in millis for checking configuration changes
-	 * @throws ConfigurationException
 	 */
-	public static synchronized void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath, long delay) throws ConfigurationException {
+	public static synchronized void configureAndWatch(Map<String, IConfigurationChangeListener> listeners, String filepath, long delay) {
 		if(instance == null) {
 			instance = new ConfigurationManager(listeners, filepath);
 			instance.delay = delay;
@@ -134,7 +139,7 @@ public class ConfigurationManager {
 	 * 
 	 * @throws ConfigurationException
 	 */
-	public void doConfigure() throws ConfigurationException {
+	public void doConfigure() {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				try {
@@ -142,8 +147,9 @@ public class ConfigurationManager {
 					currentConfigurationInfo = configurationReader.readConfiguration(filepath);
 					WatchdogService.watch(instance, currentConfigurationInfo.getConfFileList(), delay);
 					notifyListeners();
-				} catch (ConfigurationException e) {
+				} catch (ConfigurationParsingException e) {
 					logger.error(e.getMessage(), e);
+					WatchdogService.watch(instance, e.getFileParsedList(), delay);
 				}
 			}
 		};

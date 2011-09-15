@@ -134,7 +134,12 @@ public class ConfigurationInfo {
 	 * </p>
 	 */
 	public void clear() {
-		getConfFileList().clear();
-		configurationMap.clear();
+		if(confFileList != null) {
+			confFileList.clear();
+		}
+		
+		if(configurationMap != null) {
+			configurationMap.clear();
+		}
 	}
 }

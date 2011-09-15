@@ -20,13 +20,16 @@
 
 package com.google.code.jconfig.helper;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
 import com.google.code.jconfig.ConfigurationManager;
+import com.google.code.jconfig.factory.DaemonThreadFactory;
 
 /**
  * <p>
@@ -45,6 +48,18 @@ public abstract class WatchdogService {
 	
 	/**
 	 * <p>
+	 *    Watch changes on the root configuration file.
+	 * </p>
+	 * 
+	 * @param singleInstance the singleton instance of the {@link ConfigurationManager}
+	 * @param filePath the path of the root configuration file
+	 */
+	public static void watch(ConfigurationManager singleInstance, String filePath) {
+		watch(singleInstance, filePath, DEFAULT_DELAY);
+	}
+	
+	/**
+	 * <p>
 	 *    Watch changes to a list of file used in the configuration.
 	 * </p>
 	 * 
@@ -54,6 +69,21 @@ public abstract class WatchdogService {
 	 */
 	public static void watch(ConfigurationManager singleInstance, Collection<String> filePathList) {
 		watch(singleInstance, filePathList, DEFAULT_DELAY);
+	}
+	
+	/**
+	 * <p>
+	 *    Watch changes on the root configuration file.
+	 * </p>
+	 * 
+	 * @param singleInstance the singleton instance of the {@link ConfigurationManager}
+	 * @param filePath the path of the root configuration file
+	 * @param delay the delay in ms
+	 */
+	public static void watch(ConfigurationManager singleInstance, String filePath, long delay) {
+		List<String> fileCollection = new ArrayList<String>();
+		fileCollection.add(filePath);
+		watch(singleInstance, fileCollection, delay);
 	}
 	
 	/**

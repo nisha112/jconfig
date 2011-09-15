@@ -20,7 +20,7 @@
 
 package com.google.code.jconfig.factory;
 
-import com.google.code.jconfig.exception.ConfigurationException;
+import com.google.code.jconfig.exception.ConfigurationParsingException;
 import com.google.code.jconfig.reader.ConfigurationReader;
 import com.google.code.jconfig.reader.IConfigurationReader;
 
@@ -39,9 +39,9 @@ public abstract class ConfigurationReaderFactory {
 	 * </p>
 	 * 
 	 * @return an instance of {@link ConfigurationReader} class
-	 * @throws ConfigurationException
+	 * @throws ConfigurationParsingException
 	 */
-	public static IConfigurationReader getReader() throws ConfigurationException {
+	public static IConfigurationReader getReader() throws ConfigurationParsingException {
 		return new ConfigurationReader();
 	}
 }
