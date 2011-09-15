@@ -55,13 +55,13 @@ public class ConfigurationReader implements IConfigurationReader {
 	
 	private static final Logger logger = Logger.getLogger(ConfigurationReader.class);
 	
-	private enum ELEMENT_TAGS {
+	private static enum ELEMENT_TAGS {
 		CONFIGURATIONS,
 			IMPORT,
 			CONFIGURATION,
 	}
 	
-	private enum ATTRIBUTES {
+	private static enum ATTRIBUTES {
 		plugin, file
 	}
 	
@@ -150,8 +150,8 @@ public class ConfigurationReader implements IConfigurationReader {
 				try {
 					currentPlugin = newPlugin(pluginClass);
 				} catch (PluginInstantiationException e) {
-					logger.error(e.getMessage(), e);
-					// TODO: gestire il caso di plugin non istanziabile
+					clearResources();
+					throw new ConfigurationParsingException(e.getMessage());
 				}
 				configurationPluginStack.push(createHierarchicalReader(qName, attributes));
 			} else { 
@@ -193,7 +193,13 @@ public class ConfigurationReader implements IConfigurationReader {
 		
 		@Override
 		public void endDocument() throws SAXException {
+			clearResources();
+		}
+
+		private void clearResources() {
 			currentConfigPath.delete(0, currentConfigPath.length());
+			currentPlugin = null;
+			configurationPluginStack.clear();
 		}
 
 		private IHierarchicalReader createHierarchicalReader(String nodeName, Attributes attributes) {
@@ -210,7 +216,6 @@ public class ConfigurationReader implements IConfigurationReader {
 			try {
 				return (IConfigurationPlugin<?>)Class.forName(className).newInstance();
 			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
 				throw new PluginInstantiationException(e.getMessage(), e);
 			}
 		}

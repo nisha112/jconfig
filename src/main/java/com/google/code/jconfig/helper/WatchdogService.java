@@ -96,7 +96,7 @@ public abstract class WatchdogService {
 	 *                     watched for changes.
 	 * @param delay the delay in ms
 	 */
-	public static void watch(ConfigurationManager singleInstance, Collection<String> filePathList, long delay) {
+	public static synchronized void watch(ConfigurationManager singleInstance, Collection<String> filePathList, long delay) {
 		if(watchDog == null) {
 			watchDog = new WatchDog(singleInstance, filePathList, delay);
 			executorService.execute(watchDog);

@@ -68,7 +68,7 @@ public class ConfigurationManager {
 		logger.info("******* ConfigurationManager initialization *******");
 		logger.info(" -> configuration: " + filepath);
 		logger.info(" -> registered listeners: " + listeners);
-		logger.info("**************************************************");
+		logger.info("***************************************************");
 		
 		this.filepath = filepath;
 		activeListeners = listeners;
