@@ -144,7 +144,11 @@ public class ConfigurationManager {
 			public void run() {
 				try {
 					IConfigurationReader configurationReader = ConfigurationReaderFactory.getReader();
-					currentConfigurationInfo = configurationReader.readConfiguration(filepath);
+					/* clear the old infos, put in the new ones cloned then release resources of the reader */
+					currentConfigurationInfo.clear();
+					ConfigurationInfo newConfigurationInfo = configurationReader.readConfiguration(filepath);
+					currentConfigurationInfo.add(cloner.deepClone(newConfigurationInfo));
+					newConfigurationInfo.clear();
 					WatchdogService.watch(instance, currentConfigurationInfo.getConfFileList(), delay);
 					notifyListeners();
 				} catch (ConfigurationParsingException e) {

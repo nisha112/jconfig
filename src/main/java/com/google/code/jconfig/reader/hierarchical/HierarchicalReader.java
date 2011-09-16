@@ -37,7 +37,7 @@ public class HierarchicalReader implements IHierarchicalReader {
 
 	private String nodeName;
 	private String value;
-	private Map<String, String> attributes;
+	private Map<String, String> attributes = new HashMap<String, String>();
 	private List<IHierarchicalReader> children;
 	
 	/*
@@ -93,6 +93,9 @@ public class HierarchicalReader implements IHierarchicalReader {
 	 * @see com.google.code.jconfig.reader.hierarchical.IHierarchicalReader#getChildren()
 	 */
 	public List<IHierarchicalReader> getChildren() {
+		if(children == null) {
+			children = new ArrayList<IHierarchicalReader>();
+		}
 		return children;
 	}
 	
