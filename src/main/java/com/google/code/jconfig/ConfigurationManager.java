@@ -61,6 +61,7 @@ public class ConfigurationManager {
 	private static Cloner cloner = new Cloner();
 	private static final Logger logger = Logger.getLogger(ConfigurationManager.class);
 	private static final Executor poolExecutor = Executors.newSingleThreadExecutor();
+	private static final Executor listenerPoolExecutor = Executors.newCachedThreadPool();
 	
 	private ConfigurationManager() { }
 	
@@ -72,6 +73,7 @@ public class ConfigurationManager {
 		
 		this.filepath = filepath;
 		activeListeners = listeners;
+		currentConfigurationInfo = new ConfigurationInfo();
 	}
 	
 	/**
@@ -144,13 +146,14 @@ public class ConfigurationManager {
 			public void run() {
 				try {
 					IConfigurationReader configurationReader = ConfigurationReaderFactory.getReader();
+					ConfigurationInfo newConfigurationInfo = configurationReader.readConfiguration(filepath);
 					/* clear the old infos, put in the new ones cloned then release resources of the reader */
 					currentConfigurationInfo.clear();
-					ConfigurationInfo newConfigurationInfo = configurationReader.readConfiguration(filepath);
-					currentConfigurationInfo.add(cloner.deepClone(newConfigurationInfo));
+					currentConfigurationInfo.add(newConfigurationInfo);
 					newConfigurationInfo.clear();
+					
+					notifyListeners(currentConfigurationInfo.getConfigurationMap());
 					WatchdogService.watch(instance, currentConfigurationInfo.getConfFileList(), delay);
-					notifyListeners();
 				} catch (ConfigurationParsingException e) {
 					logger.error(e.getMessage(), e);
 					WatchdogService.watch(instance, e.getFileParsedList(), delay);
@@ -161,21 +164,29 @@ public class ConfigurationManager {
 		poolExecutor.execute(runnable);
 	}
 	
-	private void notifyListeners() {
+	private void notifyListeners(Map<String, Object> confToBeNotified) {
 		logger.debug("Notify listeners about configuration changes");
-		Iterator<Entry<String, IConfigurationChangeListener>> itr = activeListeners.entrySet().iterator();
-		while(itr.hasNext()) {
-			Entry<String, IConfigurationChangeListener> entry = itr.next();
-			Map<String, Object> activeConfigurations = currentConfigurationInfo.getConfigurationMap();
-			try {
-				Object configuration = activeConfigurations.get(entry.getKey());
-				if(configuration != null) {
-					logger.debug("Notifying listener <" + entry.getValue().getClass().getName() + "> for configuratio id <" + entry.getKey() + ">");
-					entry.getValue().loadConfiguration(cloner.deepClone(configuration));
+		if(confToBeNotified != null) {
+			for (Entry<String, Object> aConfEntry : confToBeNotified.entrySet()) {
+				final String key = aConfEntry.getKey();
+				final Object confData = aConfEntry.getValue();
+				final IConfigurationChangeListener listener = activeListeners.get(key);
+				if( (listener != null) && (confData != null) ) {
+					try {
+						logger.debug("Notifying listener <" + listener.getClass().getName() + "> for configuratio id <" + key + ">");
+						Runnable runnable = new Runnable() {
+							public void run() {
+								listener.loadConfiguration(cloner.deepClone(confData));
+							}
+						};
+						
+						listenerPoolExecutor.execute(runnable);
+						
+					} catch (Throwable e) {
+						// for not terminating the watchdog thread on configuration changes.
+						logger.error("Received an uncaught exception", e);
+					}
 				}
-			} catch (Throwable e) {
-				// for not terminating the watchdog thread on configuration changes.
-				logger.error("Received an uncaught exception", e);
 			}
 		}
 	}
