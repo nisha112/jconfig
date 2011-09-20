@@ -141,8 +141,9 @@ public class ConfigurationReader implements IConfigurationReader {
 				StringBuilder absolutePath = new StringBuilder(currentConfigPath);
 				absolutePath.append(importedConfiguration);
 
-				IConfigurationReader innerReader = ConfigurationReaderFactory.getReader();
-				configurationInfo.add(innerReader.readConfiguration(absolutePath.toString()));
+				//IConfigurationReader innerReader = ConfigurationReaderFactory.getReader();
+				//configurationInfo.add(innerReader.readConfiguration(absolutePath.toString()));
+				configurationInfo.add(ConfigurationReaderFactory.read(absolutePath.toString()));
 				
 			} else if(tagName.equals(ELEMENT_TAGS.CONFIGURATION.name())) {
 				logger.debug("Found <configuration> tag start.");

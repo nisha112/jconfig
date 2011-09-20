@@ -20,7 +20,12 @@
 
 package com.google.code.jconfig.factory;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.apache.log4j.Logger;
+
 import com.google.code.jconfig.exception.ConfigurationParsingException;
+import com.google.code.jconfig.model.ConfigurationInfo;
 import com.google.code.jconfig.reader.ConfigurationReader;
 import com.google.code.jconfig.reader.IConfigurationReader;
 
@@ -33,6 +38,20 @@ import com.google.code.jconfig.reader.IConfigurationReader;
  */
 public abstract class ConfigurationReaderFactory {
 
+	private static ConcurrentLinkedQueue<IConfigurationReader> availableReader;
+	private static Logger logger = Logger.getLogger(ConfigurationReaderFactory.class);
+	
+	static {
+		availableReader = new ConcurrentLinkedQueue<IConfigurationReader>();
+		
+		try {
+			availableReader.add(new ConfigurationReader());
+			availableReader.add(new ConfigurationReader());
+		} catch (ConfigurationParsingException e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+	
 	/**
 	 * <p>
 	 *    Return an instance of {@link ConfigurationReader} class.
@@ -43,5 +62,37 @@ public abstract class ConfigurationReaderFactory {
 	 */
 	public static IConfigurationReader getReader() throws ConfigurationParsingException {
 		return new ConfigurationReader();
+	}
+	
+	/**
+	 * <p>
+	 *    This method reads a configuration file using a cached instance
+	 *    reader of {@link IConfigurationReader}. If no cached reader are found
+	 *    then it instanciate one and at the end of its work it will be put in
+	 *    the cache.
+	 * </p>
+	 * 
+	 * @param resourcePath the absoluter path of the configuration to be red
+	 * @return an instance of {@link ConfigurationInfo}
+	 * @throws ConfigurationParsingException
+	 */
+	public static ConfigurationInfo read(String resourcePath) throws ConfigurationParsingException {
+		IConfigurationReader reader = null;
+		if(availableReader.isEmpty()) {
+			logger.debug("No prepared reader found. Creating a new ones.");
+			reader = new ConfigurationReader();
+		} else {
+			logger.debug("Getting a reader from the cache. Now available cached reader: " + availableReader.size());
+			reader = availableReader.remove();
+		}
+		
+		try {
+			return reader.readConfiguration(resourcePath);
+		} finally {
+			if(reader != null) {
+				availableReader.add(reader);
+				logger.debug("Current reader cache size: " + availableReader.size());
+			}
+		}
 	}
 }

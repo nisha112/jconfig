@@ -145,8 +145,9 @@ public class ConfigurationManager {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				try {
-					IConfigurationReader configurationReader = ConfigurationReaderFactory.getReader();
-					ConfigurationInfo newConfigurationInfo = configurationReader.readConfiguration(filepath);
+					//IConfigurationReader configurationReader = ConfigurationReaderFactory.getReader();
+					//ConfigurationInfo newConfigurationInfo = configurationReader.readConfiguration(filepath);
+					ConfigurationInfo newConfigurationInfo = ConfigurationReaderFactory.read(filepath);
 					/* clear the old infos, put in the new ones cloned then release resources of the reader */
 					currentConfigurationInfo.clear();
 					currentConfigurationInfo.add(newConfigurationInfo);
