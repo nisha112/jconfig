@@ -55,13 +55,13 @@ public interface INodeTransformer {
 	
 	/**
 	 * <p>
-	 *    Transform a {@link IHierarchicalReader} root to an {@link OutputStream}
+	 *    Transform a {@link IHierarchicalReader} root to an xml string
 	 * </p>
 	 * 
 	 * @param root the initial node for the transformation 
-	 * @return an implementation of an {@link OutputStream} representing the
-	 *         <em>root<\em> element and its children and attributes as an xml.
+	 * @return a string representing the <em>root<\em> element and its children
+	 *         and attributes as an xml.
 	 * @throws NodeTransformationException
 	 */
-	public OutputStream doTransformation(IHierarchicalReader root) throws NodeTransformationException;
+	public String doTransformation(IHierarchicalReader root) throws NodeTransformationException;
 }

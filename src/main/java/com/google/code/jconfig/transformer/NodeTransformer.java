@@ -21,7 +21,6 @@
 package com.google.code.jconfig.transformer;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -86,7 +85,7 @@ public class NodeTransformer implements INodeTransformer {
 	 * (non-Javadoc)
 	 * @see com.google.code.jconfig.transformer.INodeTransformer#doTransformation(com.google.code.jconfig.reader.hierarchical.IHierarchicalReader)
 	 */
-	public OutputStream doTransformation(IHierarchicalReader root) throws NodeTransformationException {
+	public String doTransformation(IHierarchicalReader root) throws NodeTransformationException {
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, (omitXmlDeclaration? YES : NO) );
@@ -98,7 +97,7 @@ public class NodeTransformer implements INodeTransformer {
 			
 			StreamResult streamResult = new StreamResult(new ByteArrayOutputStream());
 			transformer.transform(new DOMSource(domDocument), streamResult);
-			return streamResult.getOutputStream();
+			return new String( ((ByteArrayOutputStream)streamResult.getOutputStream()).toByteArray() );
 		} catch (Throwable e) {
 			throw new NodeTransformationException(e.getMessage(), e);
 		}
