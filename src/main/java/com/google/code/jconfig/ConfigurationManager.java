@@ -32,7 +32,6 @@ import com.google.code.jconfig.factory.ConfigurationReaderFactory;
 import com.google.code.jconfig.helper.WatchdogService;
 import com.google.code.jconfig.listener.IConfigurationChangeListener;
 import com.google.code.jconfig.model.ConfigurationInfo;
-import com.google.code.jconfig.reader.IConfigurationReader;
 import com.rits.cloning.Cloner;
 
 /**

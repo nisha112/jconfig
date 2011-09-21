@@ -68,8 +68,8 @@ public abstract class ConfigurationReaderFactory {
 	 * <p>
 	 *    This method reads a configuration file using a cached instance
 	 *    reader of {@link IConfigurationReader}. If no cached reader are found
-	 *    then it instanciate one and at the end of its work it will be put in
-	 *    the cache.
+	 *    then a new one instance of {@link IConfigurationReader} is created and
+	 *    at the end of its work it will be put in the cache.
 	 * </p>
 	 * 
 	 * @param resourcePath the absoluter path of the configuration to be red
