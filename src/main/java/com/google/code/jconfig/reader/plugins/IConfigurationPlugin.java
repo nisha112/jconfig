@@ -20,12 +20,18 @@
 
 package com.google.code.jconfig.reader.plugins;
 
+import com.google.code.jconfig.annotation.Cacheable;
 import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 
 /**
  * <p>
  *    This interface represents a custom configuration plugin for parsing custom
  *    defined configuration.
+ * </p>
+ * 
+ * <p>
+ *    If you wanna make your plugin implementation cacheable, add the
+ *    {@link Cacheable} annotation on your class.
  * </p>
  *
  * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)

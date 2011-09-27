@@ -57,6 +57,7 @@ public class ConfigurationManagerTest extends TestCase {
 		listeners.put("general", new TestConfigurationChangeListener());
 		listeners.put("cache", new TestCacheConfigurationChangeListener());
 		listeners.put("inner_props", new TestConfigurationChangeListener());
+		listeners.put("inner_props_2", new TestConfigurationChangeListener());
 		
 		ConfigurationManager.configureAndWatch(listeners, systemPath, 200L);
 		for(;;);

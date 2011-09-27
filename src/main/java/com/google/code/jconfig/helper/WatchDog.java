@@ -104,7 +104,7 @@ public class WatchDog implements Runnable {
 				Thread.sleep(delay);
 			} catch (InterruptedException e) {
 				// no interruption expected
-				System.out.println(e.getMessage());
+				logger.error(e.getMessage(), e);
 			}
 			
 			if( !suspendConfigurationCheck ) {

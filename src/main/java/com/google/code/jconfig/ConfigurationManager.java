@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.log4j.Logger;
 
 import com.google.code.jconfig.exception.ConfigurationParsingException;
@@ -135,7 +136,9 @@ public class ConfigurationManager {
 	
 	/**
 	 * <p>
-	 *    Execute the configuration work one at a time.
+	 *    Save the current configuration and send a notify only for changed ones
+	 *    and a new ones registered. Of course for the latter case, a listener
+	 *    had to be provided when calling <em>configureAndWatch<\em> method.
 	 * </p>
 	 * 
 	 * @throws ConfigurationException
@@ -144,16 +147,28 @@ public class ConfigurationManager {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				try {
-					//IConfigurationReader configurationReader = ConfigurationReaderFactory.getReader();
-					//ConfigurationInfo newConfigurationInfo = configurationReader.readConfiguration(filepath);
 					ConfigurationInfo newConfigurationInfo = ConfigurationReaderFactory.read(filepath);
-					/* clear the old infos, put in the new ones cloned then release resources of the reader */
-					currentConfigurationInfo.clear();
-					currentConfigurationInfo.add(newConfigurationInfo);
-					newConfigurationInfo.clear();
-					
-					notifyListeners(currentConfigurationInfo.getConfigurationMap());
-					WatchdogService.watch(instance, currentConfigurationInfo.getConfFileList(), delay);
+					Map<String, Object> confToBeNotified = new HashMap<String, Object>();
+					Map<String, Object> curConfMap = currentConfigurationInfo.getConfigurationMap();
+					if(newConfigurationInfo != null) {
+						for (Entry<String, Object> aNewConfEntry : newConfigurationInfo.getConfigurationMap().entrySet()) {
+							String key = aNewConfEntry.getKey();
+							Object theConf = aNewConfEntry.getValue();
+							/* only for new conf or changed configurations will be send a notify */
+							if( ( curConfMap.containsKey(key) && !EqualsBuilder.reflectionEquals(theConf, curConfMap.get(key), false) ) || !curConfMap.containsKey(key) ) {
+								confToBeNotified.put(key, theConf);
+							}
+						}
+						
+						/* clear the old infos, put in the new ones cloned then release resources of the reader */
+						currentConfigurationInfo.clear();
+						currentConfigurationInfo.add(newConfigurationInfo);
+						newConfigurationInfo.clear();
+						/* notify changes to listener */
+						notifyListeners(confToBeNotified);
+						/* start watch on files */
+						WatchdogService.watch(instance, currentConfigurationInfo.getConfFileList(), delay);
+					}
 				} catch (ConfigurationParsingException e) {
 					logger.error(e.getMessage(), e);
 					WatchdogService.watch(instance, e.getFileParsedList(), delay);

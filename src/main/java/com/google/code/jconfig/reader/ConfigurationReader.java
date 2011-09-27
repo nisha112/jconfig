@@ -33,6 +33,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.code.jconfig.exception.ConfigurationParsingException;
 import com.google.code.jconfig.exception.PluginInstantiationException;
+import com.google.code.jconfig.factory.ConfigurationPluginFactory;
 import com.google.code.jconfig.factory.ConfigurationReaderFactory;
 import com.google.code.jconfig.model.ConfigurationInfo;
 import com.google.code.jconfig.reader.hierarchical.HierarchicalReader;
@@ -141,15 +142,13 @@ public class ConfigurationReader implements IConfigurationReader {
 				StringBuilder absolutePath = new StringBuilder(currentConfigPath);
 				absolutePath.append(importedConfiguration);
 
-				//IConfigurationReader innerReader = ConfigurationReaderFactory.getReader();
-				//configurationInfo.add(innerReader.readConfiguration(absolutePath.toString()));
 				configurationInfo.add(ConfigurationReaderFactory.read(absolutePath.toString()));
 				
 			} else if(tagName.equals(ELEMENT_TAGS.CONFIGURATION.name())) {
 				logger.debug("Found <configuration> tag start.");
 				String pluginClass = attributes.getValue(ATTRIBUTES.plugin.name());
 				try {
-					currentPlugin = newPlugin(pluginClass);
+					currentPlugin = ConfigurationPluginFactory.getPlugin(pluginClass);
 				} catch (PluginInstantiationException e) {
 					clearResources();
 					throw new ConfigurationParsingException(e.getMessage());
@@ -211,14 +210,6 @@ public class ConfigurationReader implements IConfigurationReader {
 			}
 			
 			return hierarchicalReader;
-		}
-		
-		private IConfigurationPlugin<?> newPlugin(String className) throws PluginInstantiationException {
-			try {
-				return (IConfigurationPlugin<?>)Class.forName(className).newInstance();
-			} catch (Exception e) {
-				throw new PluginInstantiationException(e.getMessage(), e);
-			}
 		}
 	}
 }

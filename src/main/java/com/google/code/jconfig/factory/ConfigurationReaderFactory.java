@@ -20,7 +20,9 @@
 
 package com.google.code.jconfig.factory;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.FutureTask;
 
 import org.apache.log4j.Logger;
 
@@ -31,25 +33,40 @@ import com.google.code.jconfig.reader.IConfigurationReader;
 
 /**
  * <p>
- *    Factory for building a configuration reader
+ *    Factory for default configuration readers.
  * </p>
  *
  * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
  */
 public abstract class ConfigurationReaderFactory {
 
-	private static ConcurrentLinkedQueue<IConfigurationReader> availableReader;
+	private static ConcurrentLinkedQueue<FutureTask<IConfigurationReader>> availableReader;
 	private static Logger logger = Logger.getLogger(ConfigurationReaderFactory.class);
 	
 	static {
-		availableReader = new ConcurrentLinkedQueue<IConfigurationReader>();
+		availableReader = new ConcurrentLinkedQueue<FutureTask<IConfigurationReader>>();
 		
-		try {
-			availableReader.add(new ConfigurationReader());
-			availableReader.add(new ConfigurationReader());
-		} catch (ConfigurationParsingException e) {
-			logger.error(e.getMessage(), e);
-		}
+		Callable<IConfigurationReader> reader1 = new Callable<IConfigurationReader>() {
+
+			public IConfigurationReader call() throws Exception {
+				return new ConfigurationReader();
+			}
+		};
+			
+		Callable<IConfigurationReader> reader2 = new Callable<IConfigurationReader>() {
+
+			public IConfigurationReader call() throws Exception {
+				return new ConfigurationReader();
+			}
+		};
+			
+		FutureTask<IConfigurationReader> task1 = new FutureTask<IConfigurationReader>(reader1);
+		task1.run();
+		availableReader.add(task1);
+		
+		FutureTask<IConfigurationReader> task2 = new FutureTask<IConfigurationReader>(reader2);
+		task2.run();
+		availableReader.add(task2);
 	}
 	
 	/**
@@ -77,22 +94,28 @@ public abstract class ConfigurationReaderFactory {
 	 * @throws ConfigurationParsingException
 	 */
 	public static ConfigurationInfo read(String resourcePath) throws ConfigurationParsingException {
-		IConfigurationReader reader = null;
-		if(availableReader.isEmpty()) {
-			logger.debug("No prepared reader found. Creating a new ones.");
-			reader = new ConfigurationReader();
-		} else {
-			logger.debug("Getting a reader from the cache. Now available cached reader: " + availableReader.size());
-			reader = availableReader.remove();
+		FutureTask<IConfigurationReader> theTask = (availableReader.isEmpty()? null : availableReader.remove());
+		if(theTask == null) {
+			logger.debug("No reader available. Creatine a new one.");
+			Callable<IConfigurationReader> readerEval = new Callable<IConfigurationReader>() {
+
+				public IConfigurationReader call() throws Exception {
+					return new ConfigurationReader();
+				}
+			};
+			
+			theTask = new FutureTask<IConfigurationReader>(readerEval);
+			theTask.run();
+			logger.debug("New reader instance ready to be uswed and cached.");
 		}
 		
 		try {
-			return reader.readConfiguration(resourcePath);
+			return theTask.get().readConfiguration(resourcePath);
+		} catch (Exception e) {
+			throw new ConfigurationParsingException(e.getMessage());
 		} finally {
-			if(reader != null) {
-				availableReader.add(reader);
-				logger.debug("Current reader cache size: " + availableReader.size());
-			}
+			availableReader.add(theTask);
+			logger.debug("Current reader cache size: " + availableReader.size());
 		}
 	}
 }

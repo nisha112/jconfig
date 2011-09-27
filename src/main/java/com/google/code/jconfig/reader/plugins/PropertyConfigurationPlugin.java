@@ -23,6 +23,7 @@ package com.google.code.jconfig.reader.plugins;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.code.jconfig.annotation.Cacheable;
 import com.google.code.jconfig.model.BasicConfiguration;
 import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
 
@@ -50,6 +51,7 @@ import com.google.code.jconfig.reader.hierarchical.IHierarchicalReader;
  *
  * @author Gabriele Fedeli (gabriele.fedeli@gmail.com)
  */
+@Cacheable
 public class PropertyConfigurationPlugin implements IConfigurationPlugin<BasicConfiguration> {
 
 	/*
