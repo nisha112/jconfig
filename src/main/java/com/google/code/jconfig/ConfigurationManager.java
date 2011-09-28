@@ -25,6 +25,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang3.JavaVersion;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.log4j.Logger;
 
@@ -66,6 +68,12 @@ public class ConfigurationManager {
 	private ConfigurationManager() { }
 	
 	private ConfigurationManager(Map<String, IConfigurationChangeListener> listeners, String filepath) {
+		logger.debug("Running on machine with Java version: " + SystemUtils.JAVA_RUNTIME_VERSION);
+		if( !SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_5) ) {
+			logger.fatal("Current Java version: " + SystemUtils.JAVA_RUNTIME_VERSION + " - NEEDED " + JavaVersion.JAVA_1_5 + " or above.");
+			throw new RuntimeException("You must have at leat Java 1.5 using this library.");
+		}
+		
 		logger.info("******* ConfigurationManager initialization *******");
 		logger.info(" -> configuration: " + filepath);
 		logger.info(" -> registered listeners: " + listeners);
